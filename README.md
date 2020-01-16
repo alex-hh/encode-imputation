@@ -1,7 +1,6 @@
 ## Preprocessing
 We worked with the data in hdf5 format, with all training observations for a single chromosome in a single h5 file.
-To build these files, run preprocessing/build_h5_from_bigwigs.py train and preprocessing/build_h5_from_bigwigs.py val. The --directory flag or DATA_DIR environment variable should be used to specify the directory containing the bigwigs. <dataset> takes the values train and val.
-
+To build these files, run preprocessing/build_h5_from_bigwigs.py train and preprocessing/build_h5_from_bigwigs.py val. The --directory flag or DATA_DIR environment variable should be used to specify the directory containing the bigwigs.
 ## Training
 
 We trained models initialized with different random seeds on each chromosome
