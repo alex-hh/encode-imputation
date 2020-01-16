@@ -14,15 +14,16 @@ def extract_chrom_num(s):
   else:
     return int(m.group(0))
 
-def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[]):
-  print('IN MAIN, dataset', dataset, flush=True)
+def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directory=None):
+  if directory is None:
+    directory = output_dir
   
   model_list = sorted(model_list, key=extract_chrom_num)
   print('Using the following {} models'.format(len(model_list)), model_list)
-  ensemble_code = 'c' + 'c'.join([extract_chrom_num(e) for e in model_list])
+  ensemble_code = 'c' + 'c'.join([str(extract_chrom_num(e)) for e in model_list])
   ensemble_imp_path = 'averaged_preds-{}/{}'.format(checkpoint_code, ensemble_code)
 
-  imp_dir = output_dir + '{}_imputations/{}/'.format(dataset, expt_set)
+  imp_dir = os.path.join(directory, '{}_imputations/{}/'.format(dataset, expt_set))
   os.makedirs(imp_dir+ensemble_imp_path, exist_ok=True)
   pred_track_names = dataset_expts[dataset]
     
@@ -62,13 +63,13 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[]):
 
 
 if __name__ == '__main__':
-  print('AT PARSE ARGS')
   parser = argparse.ArgumentParser()
   parser.add_argument('expt_set')
   parser.add_argument('chrom')
   parser.add_argument('checkpoint_code') # 07.1
   parser.add_argument('dataset')
   parser.add_argument('-model_list', nargs='+', required=True, help='Model names e.g. chromschr21')
+  parser.add_argument('--directory', default=None)
   args = parser.parse_args()
   main(args.expt_set, args.chrom, args.checkpoint_code, dataset=args.dataset,
-       model_list=args.model_list)
+       model_list=args.model_list, directory=args.directory)

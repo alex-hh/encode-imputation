@@ -1,3 +1,4 @@
+import os
 import math
 from collections import defaultdict
 
@@ -30,7 +31,7 @@ class TrainDataGeneratorHDF5(Sequence):
     self.n_drop = n_drop
 
     train_h5_filename = '{}_{}_targets.h5'.format(chrom, dataset)
-    train_chrom_f = self.directory + '{}'.format(train_h5_filename)
+    train_chrom_f = os.path.join(self.directory, train_h5_filename)
     print('Loading input data for chrom {} from file {}'.format(chrom, train_h5_filename))
     with h5py.File(train_chrom_f, 'r') as h5f:
       self.train_x = h5f['targets'][:BINNED_CHRSZ[chrom]]
@@ -114,13 +115,13 @@ class ValDataGeneratorHDF5(Sequence):
     self.train_dataset = train_dataset
 
     h5_filename = '{}_{}_targets.h5'.format(chrom, self.train_dataset)
-    chrom_f = self.directory+'{}'.format(h5_filename)
+    chrom_f = os.path.join(self.directory, h5_filename)
     print('Loading val input data for chrom {} from file {}'.format(chrom, h5_filename))
     with h5py.File(chrom_f, 'r') as h5f:
       self.train_x = h5f['targets'][:BINNED_CHRSZ[chrom]]
     
     val_h5_filename = '{}_val_targets.h5'.format(chrom)
-    val_chrom_f = self.directory + '{}'.format(val_h5_filename)
+    val_chrom_f = os.path.join(self.directory, val_h5_filename)
     print('Loading val target data for chrom {} from file {}'.format(chrom, val_h5_filename))
     with h5py.File(val_chrom_f, 'r') as h5f:
       self.val_x = h5f['targets'][:BINNED_CHRSZ[chrom]]
@@ -171,7 +172,7 @@ class TestDataGeneratorHDF5(Sequence):
     self.chrom = chrom
     print('Test experiments:', self.test_expt_names)
     h5_filename = '{}_{}_targets.h5'.format(chrom, self.train_dataset)
-    chrom_f = self.directory+'{}'.format(h5_filename)
+    chrom_f = os.path.join(self.directory, h5_filename)
     print('Loading test input data for chrom {} from file {}'.format(chrom, h5_filename))
     with h5py.File(chrom_f, 'r') as h5f:
       self.train_x = h5f['targets'][:BINNED_CHRSZ[chrom]]
