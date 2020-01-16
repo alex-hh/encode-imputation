@@ -1,6 +1,7 @@
 ## Preprocessing
 We worked with the data in hdf5 format, with all training observations for a single chromosome in a single h5 file.
-To build these files, run preprocessing/build_h5_from_bigwigs.py. This will take some time, to speed up parallelise across chromosomes [TODO: explain how].
+
+To build these files run python preprocessing/build_h5_from_bigwigs.py --directory /path/to/data/dir --all_chroms
 
 ## Training
 

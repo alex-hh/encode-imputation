@@ -310,6 +310,7 @@ class TrackHandler:
       assay_types = dataset_assaytypes[dataset]
       if expt_names == 'all':
         expt_names = dataset_expts[dataset]
+    
     self.use_compressed = use_compressed
     self.transform = transform
     self.chroms = chroms
@@ -320,6 +321,7 @@ class TrackHandler:
     self.dataset_dir = dataset_dir
     self.cell_types = cell_types
     self.assay_types = assay_types
+    
     for expt_name in self.expt_names:
       cell_type = re.match('C\d{2}', expt_name).group(0) # overkill - could just slice
       assay_type = re.search('M\d{2}', expt_name).group(0)

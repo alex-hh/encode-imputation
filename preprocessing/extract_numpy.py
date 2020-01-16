@@ -3,21 +3,21 @@ import numpy as np
 import pandas as pd
 import pyBigWig
 
-from utils.CONSTANTS import CHRSZ, train_expt_names, train_dir, data_dir
+from utils.CONSTANTS import CHRSZ, train_expt_names, data_dir
 from utils.track_handlers import BigWig
 
 # what we do is just extract tracks from bigwig and average them over 25bp windows
 # memory requirement: 32 bytes per float. Roughly 32x2.5x10^8 = 10^10 bytes per chromosome ~ 1GB per chromosome
 # the overall thing after averaging should be similar - you divide by 25 bp and multiply by 23 chromosomes
 
-def main(bw, chrs, window_size=25, uncompressed=False):
+def main(bw_file, chrs, window_size=25, uncompressed=False):
     """
     Function taken from evaluation scripts - https://github.com/ENCODE-DCC/imputation_challenge/blob/master/build_npy_from_bigwig.py
     ToDo: refactor so that this belongs to BigWig class
     Returns:
         { chr: [] } where [] is a numpy 1-dim array
     """
-    bw = BigWig(bw)
+    bw = BigWig(bw_file)
     bw_base = bw_file.split('.bigwig')[0]
     if uncompressed:
       current_chroms = [f.split('.')[1] for f in glob.glob(bw_base+'*.npz')]

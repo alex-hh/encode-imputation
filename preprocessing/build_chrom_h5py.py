@@ -3,7 +3,6 @@ import h5py
 
 from utils.CONSTANTS import all_chromosomes, n_expts, data_dir, BINNED_CHRSZ
 from utils.track_handlers import TrackHandler
-from utils.data_loaders import SeqMultiTargetGenerator
 
 
 def main(dataset, chrom, directory=None):
