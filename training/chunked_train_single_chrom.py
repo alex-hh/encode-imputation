@@ -45,7 +45,7 @@ def main(train_dataset, expt_set, model_name=None, chrom='chr21', test_run=False
                                   'loss': 'cauchy5', 'optimizer': 'adam',
                                   'lr': 0.0003, 'seed': seed})
 
-  checkpoint_folder = output_dir + 'weights/{}'.format(expt_set)
+  checkpoint_folder = os.path.join(output_dir, 'weights/{}'.format(expt_set))
   os.makedirs(checkpoint_folder, exist_ok=True)
   callbacks = [EpochTimer()] # does what it sounds like
 
@@ -62,9 +62,9 @@ def main(train_dataset, expt_set, model_name=None, chrom='chr21', test_run=False
     callbacks += get_checkpoint_callbacks(checkpoint_folder, model_name, weighted_average=weighted_average)
 
   if save_logs and not test_run:
-    callbacks += [CSVLogger(output_dir+'logs/{}/{}.csv'.format(expt_set, model_name), append=False),
-                  ResumableTensorBoard(start_epoch*epoch_size,
-                                       log_dir=output_dir+'logs/{}/{}/'.format(expt_set, model_name),
+    callbacks += [CSVLogger(os.path.join(output_dir, 'logs/{}/{}.csv'.format(expt_set, model_name)), append=False),
+                  ResumableTensorBoard(0,
+                                       log_dir=os.path.join(output_dir, 'logs/{}/{}/'.format(expt_set, model_name)),
                                        update_freq=100000)
                   ]
 
@@ -83,8 +83,10 @@ if __name__ == '__main__':
   parser.add_argument('--test_run', action='store_true')
   parser.add_argument('--weighted_average', action='store_true')
   parser.add_argument('--save_logs', action='store_true')
+  parser.add_argument('--seed', default=211, type=int)
   args = parser.parse_args()
   print(args)
   main(args.train_dataset, args.expt_set, model_name=args.model_name,
        chrom=args.chrom, test_run=args.test_run, weighted_average=args.weighted_average,
-       save_logs=args.save_logs, eval_freq=args.eval_freq, epochs=args.epochs)
+       save_logs=args.save_logs, eval_freq=args.eval_freq, epochs=args.epochs,
+       seed=args.seed)

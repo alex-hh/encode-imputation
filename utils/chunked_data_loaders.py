@@ -1,4 +1,4 @@
-import math, gc
+import math, gc, os
 from collections import defaultdict
 
 import h5py
@@ -149,7 +149,7 @@ class ChunkedTrainDataGeneratorHDF5(BaseChunkedDataGeneratorHDF5):
 
     all_train_x_chunks = []
     h5_filename = '{}_{}_targets.h5'.format(chrom, self.dataset)
-    chrom_f = self.directory+'{}'.format(h5_filename)
+    chrom_f = os.path.join(self.directory, '{}'.format(h5_filename))
     print('Loading {} data for chrom {} from file {}'.format(self.dataset, chrom, h5_filename))
     
     with h5py.File(chrom_f, 'r') as h5f:
@@ -243,7 +243,7 @@ class ChunkedValDataGeneratorHDF5:
     all_train_x_chunks = []
     
     h5_filename = '{}_{}_targets.h5'.format(chrom, self.dataset)
-    chrom_f = self.directory+'{}'.format(h5_filename)
+    chrom_f = os.path.join(self.directory, '{}'.format(h5_filename))
     print('Loading {} data for chrom {} from file {}'.format(self.dataset, chrom, h5_filename))
     with h5py.File(chrom_f, 'r') as h5f:
       for chunk_start in chunk_list:

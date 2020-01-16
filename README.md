@@ -1,7 +1,12 @@
 ## Preprocessing
+
 We worked with the data in hdf5 format, with all training observations for a single chromosome in a single h5 file.
 
-To build these files run python preprocessing/build_h5_from_bigwigs.py --directory /path/to/data/dir --all_chroms
+To build these files run 
+
+  ``` bash
+      python preprocessing/build_h5_from_bigwigs.py --directory /path/to/data/dir --all_chroms
+  ```
 
 ## Predictions
 
@@ -24,3 +29,6 @@ This assumes that the weights are in a subdirectory named imp within the data di
 We trained models initialized with different random seeds on each chromosome
 Run training/chunked_train_single_chrom.py to train on a single chromosome.
 
+## Requirements
+
+Developed and run with Python 3.6. See requirements.txt for details of packages.
