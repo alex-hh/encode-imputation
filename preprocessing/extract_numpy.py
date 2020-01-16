@@ -40,13 +40,6 @@ if __name__ == '__main__':
                       default=['all'])
   parser.add_argument('--uncompressed', action='store_true')
   args = parser.parse_args()
-  print(args, flush=True)
-  try:
-    file_index = int(args.bw_file)
-    bw_file = train_dir + expt_names[file_index] + '.bigwig'
-    print('Extracting {}th file: {}'.format(file_index, bw_file), flush=True)
-  except:
-    bw_file = args.bw_file
   if args.chrom == ['all']:
       args.chrom = ['chr' + str(i) for i in range(1, 23)] + ['chrX']
   main(bw_file, args.chrom, uncompressed=args.uncompressed)
