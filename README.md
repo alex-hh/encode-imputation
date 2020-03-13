@@ -27,7 +27,11 @@ This assumes that the weights are in a subdirectory named imp within the data di
 ## Training
 
 We trained models initialized with different random seeds on each chromosome
-Run training/chunked_train_single_chrom.py to train on a single chromosome.
+To train on a single chromosome (e.g. chr21), run 
+
+  ``` bash
+      python training/chunked_train_single_chrom.py --chrom chr21
+  ```
 
 ## Requirements
 
