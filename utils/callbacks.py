@@ -195,7 +195,7 @@ class GeneratorVal(BatchedValidationCallback):
 
     for k, v in metric_dict.items():
       if self.verbose:
-        print('epoch {} {} {} after {} samples:\t{}'.format(self._current_epoch, self.log_prefix, k, self._epoch_samples, v), flush=True)
+        print('epoch {} {}{} after {} samples:\t{}'.format(self._current_epoch, self.log_prefix, k, self._epoch_samples, v), flush=True)
       if logs is not None:
         logs['{}{}'.format(self.log_prefix, k)] = v
       self._current_metrics['{}{}'.format(self.log_prefix, k)] = v

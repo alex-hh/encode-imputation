@@ -5,7 +5,7 @@ import numpy as np
 from keras import backend as K
 from keras.callbacks import CSVLogger, ModelCheckpoint, TensorBoard
 
-from training.train_config_helpers import load_models_from_config, load_data_from_config
+from training.expt_config_loaders import load_models_from_config, load_data_from_config
 from utils.callbacks import GeneratorVal, EpochTimer, RunningLossCheckpointer, MetaEpGenVal,\
                             ResumableTensorBoard, MovingAverageVal, MovingAverageCheckpoint
 from utils.CONSTANTS import BINNED_CHRSZ, data_dir, all_chromosomes

@@ -1,5 +1,4 @@
 import os, json
-from copy import deepcopy
 
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
@@ -12,54 +11,6 @@ from utils.callbacks import GeneratorVal, MovingAverageVal, MovingAverageCheckpo
 from utils.full_data_loaders import TrainDataGeneratorHDF5, ValDataGeneratorHDF5, TestDataGeneratorHDF5
 from utils.chunked_data_loaders import ChunkedTrainDataGeneratorHDF5
 
-
-def save_train_config(config_name, config_dict, config_base):
-  # json.dumps(config_dict)
-  config_folder = 'experiment_settings/{}'.format(config_base)
-  os.makedirs(config_folder, exist_ok=True)
-  with open('{}/{}.json'.format(config_folder, config_name), 'w') as jsfile:
-    json.dump(config_dict, jsfile, indent=2) # indent forces pretty printing
-
-## train_config = {'model_kwargs':, 'train_kwargs', 'data_kwargs':}
-
-def param_str(v):
-  if type(v) in [list, tuple]:
-    return '-'.join([str(o) for o in v])
-  else:
-    return str(v)
-
-def save_experiment_params(base_config_dict, params, base_name):
-  shorthand_sets = {'tk': 'train_kwargs', 'dk': 'data_kwargs',
-                    'mk': 'model_kwargs', 'vk': 'val_kwargs'}
-  for plist in params:
-    config = deepcopy(base_config_dict)
-    pv = []
-    for s, param, v in plist:
-      config[shorthand_sets.get(s, s)][param] = v
-      print(param)
-      if type(v) == dict:
-        pv.append(param+'-'.join([str(k)+param_str(item) for k, item in v.items()]))
-      else:
-        pv.append(param+param_str(v))
-
-    config['expt_name'] = base_name+'_'+'-'.join(pv)
-    save_train_config('-'.join(pv), config, base_name)
-
-def save_train_config(expt_set, expt_name, model_class, data_loader,
-                      weighted_average=False, eval_freq=1000000,
-                      train_kwargs={}):
-  base_kwargs = {}
-  base_kwargs['model_kwargs'] = model_class.config
-  base_kwargs['model_kwargs']['model_class'] = model_class.__class__.__name__
-  base_kwargs['data_kwargs'] = data_loader.config
-  base_kwargs['data_kwargs']['data_class'] = data_loader.__class__.__name__
-  base_kwargs['val_kwargs'] = {'weighted_average': weighted_average, 'eval_freq': eval_freq}
-  base_kwargs['train_kwargs'] = train_kwargs
-
-  config_output_path = config_dir + expt_set
-  os.makedirs(config_output_path, exist_ok=True)
-  with open(config_output_path + '/' + expt_name +'.json', 'w') as outf:
-    json.dump(base_kwargs, outf, indent=2)
 
 def get_validation_callbacks(val_model, val_gen, checkpoint_folder, expt_name, verbose=1,
                              eval_freq=1000000, weighted_average=False, test_run=False):
@@ -146,7 +97,16 @@ def load_data_from_config(config, local=False, val_only=False, custom_kwargs={},
   #   "replace_gaps": true,
   #   "use_backup": false,
   #   "shuffle": true}
-  train_gen = TrainDataGeneratorHDF5(**config['data_kwargs'])
+  data_class = config['data_kwargs'].pop('data_class')
+  assert data_class in ['HDF5InMemDict', 'TrainDataGeneratorHDF5', 'ChunkedTrainDataGeneratorHDF5']
+  if data_class == 'HDF5InMemDict':
+    from utils.old_data_loaders import HDF5InMemDict
+    train_gen = HDF5InMemDict(**config['data_kwargs'])
+  elif data_class == 'TrainDataGeneratorHDF5':
+    train_gen = TrainDataGeneratorHDF5(**config['data_kwargs'])
+  elif data_class == 'ChunkedTrainDataGeneratorHDF5':
+    train_gen = ChunkedTrainDataGeneratorHDF5(**config['data_kwargs'])
+  # train_gen = TrainDataGeneratorHDF5(**config['data_kwargs'])
   if train_only:
     return train_gen, None
   val_data_kwargs = deepcopy(config['data_kwargs'])

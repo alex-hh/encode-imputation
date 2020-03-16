@@ -1,4 +1,8 @@
 __pycache__
 data/training
 data/validation
+IS-VPN.pdf
+logs
+outputs
+notebooks
 
