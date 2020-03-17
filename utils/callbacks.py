@@ -111,9 +111,13 @@ class BatchedValidationCallback(Callback):
     # https://github.com/tensorflow/tensorflow/blob/5912f51d580551e5cee2cfde4cb882594b4d3e60/tensorflow/python/keras/callbacks.py#L955
     logs = logs or {}
     logs.update(self._current_metrics)
+    
+    print(f'Batch end, samples seen {self._samples_seen_since_last_saving} eval freq {self.eval_freq}')
+
     if isinstance(self.eval_freq, int):
       self._samples_seen_since_last_saving += logs.get('size', 1)
       self._epoch_samples += logs.get('size', 1)
+
       if self._samples_seen_since_last_saving >= self.eval_freq:
         if self.verbose == 2:
           print('pre val callback logs', logs)

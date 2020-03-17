@@ -53,7 +53,6 @@ CHRSZ = {
     'chr19': 58617616,
     'chr2': 242193529,
     'chr20': 64444167,
-
     'chr21': 46709983,
     'chr22': 50818468,
     'chr3': 198295559,
@@ -95,8 +94,8 @@ BINNED_CHRSZ = {'chr1': 9958257,
 all_chromosomes = ['chr{}'.format(i) for i in list(range(1,23))] + ['chrX']
 
 data_dir = os.environ.get('DATA_DIR', 'data/')
-config_dir = os.environ.get('CONFIG_DIR', 'experiment_settings/')
-output_dir = os.environ.get('OUTPUT_DIR', data_dir)
+config_dir = os.environ.get('CONFIG_DIR', 'experiment_config/')
+output_dir = os.environ.get('OUTPUT_DIR', 'outputs/')
 # if data_dir in ['data', 'data/']:
 #     genome_path = 'remote_data/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta'
 # else:
@@ -106,15 +105,15 @@ n_train_expts = 267
 n_val_expts = 45
 n_expts = {'train': 267, 'val': 45}
 
-train_df = pd.read_csv(data_dir+'enhanced_metadata_training_data.tsv')
+train_df = pd.read_csv(os.path.join(data_dir, 'enhanced_metadata_training_data.tsv'))
 train_df.set_index('filename', inplace=True)
 train_syn_ids = train_df['synapse_id']
 
-all_metadata = pd.read_csv(data_dir+'metadata_all.csv')
+all_metadata = pd.read_csv(os.path.join(data_dir, 'metadata_all.csv'))
 test_expt_names = all_metadata[all_metadata['set']=='B']['track_code'].values
 
 train_expt_names = [f.split('.')[0] for f in train_df.index.values]
-val_expt_names = [f.split('.')[0] for f in pd.read_csv(data_dir+'metadata_validation_data.tsv', sep='\t')['filename'].values]
+val_expt_names = [f.split('.')[0] for f in pd.read_csv(os.path.join(data_dir,'metadata_validation_data.tsv'), sep='\t')['filename'].values]
 dataset_expts = {'train': train_expt_names,
                  'val': val_expt_names,
                  'all': train_expt_names + val_expt_names,

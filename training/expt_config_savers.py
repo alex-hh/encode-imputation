@@ -1,11 +1,15 @@
 import os, json
 from copy import deepcopy
 
-def save_train_config(config_name, config_dict, config_base):
+def save_train_config(expt_name, config_dict, expt_set):
+  """
+  expt_set is basically just the name of the directory in experiment_config within which 
+           json will be saved. Sharing a common expt_set is a way of grouping sets of related experiments.
+  """
   # json.dumps(config_dict)
-  config_folder = 'experiment_config/{}'.format(config_base)
+  config_folder = f'experiment_config/{expt_set}'
   os.makedirs(config_folder, exist_ok=True)
-  with open('{}/{}.json'.format(config_folder, config_name), 'w') as jsfile:
+  with open(f'{config_folder}/{expt_name}.json', 'w') as jsfile:
     json.dump(config_dict, jsfile, indent=2) # indent forces pretty printing
 
 ## train_config = {'model_kwargs':, 'train_kwargs', 'data_kwargs':}
@@ -37,7 +41,7 @@ def save_experiment_params(base_config_dict, params, expt_set):
     config['expt_name'] = expt_set+'_'+'-'.join(pv)
     save_train_config('-'.join(pv), config, expt_set)
 
-def save_train_config(expt_set, expt_name, model_class, data_loader,
+def save_retrain_config(expt_set, expt_name, model_class, data_loader,
                       weighted_average=False, eval_freq=1000000,
                       train_kwargs={}):
   base_kwargs = {}

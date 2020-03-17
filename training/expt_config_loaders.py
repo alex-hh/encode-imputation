@@ -78,27 +78,13 @@ def load_data_from_config(config, local=False, val_only=False, custom_kwargs={},
    train_only: when training on full (train+val) dataset set to true
    returns a train data generator and a val data generator
   """
-  # TODO - which of these config settings are relevant - test_weighted_average, test_time, secondary_chrom_size, custom_val, custom_splits, train_chrom_size, also_full_val, secondary_chroms
-  # dk = "data_kwargs": {
-  #   "data_class": "HDF5InMemDict",
-  #   "n_drop": 50,
-  #   "n_predict": 50,
-  #   "dataset": "all",
-  #   "directory": "/work/ahawkins/encodedata/",
-  #   "chroms": [
-  #     "chr13"
-  #   ],
-  #   "chunks_per_batch": 256,
-  #   "transform": null,
-  #   "custom_splits": false,
-  #   "use_metaepochs": true,
-  #   "subsample_each_epoch": true,
-  #   "dataset_size": 1000000,
-  #   "replace_gaps": true,
-  #   "use_backup": false,
-  #   "shuffle": true}
+
   data_class = config['data_kwargs'].pop('data_class')
   assert data_class in ['HDF5InMemDict', 'TrainDataGeneratorHDF5', 'ChunkedTrainDataGeneratorHDF5']
+  if ('directory' not in config['data_kwargs']) or local:
+    config['data_kwargs']['directory'] = data_dir
+  data_directory = config['data_kwargs']['directory']
+  
   if data_class == 'HDF5InMemDict':
     from utils.old_data_loaders import HDF5InMemDict
     train_gen = HDF5InMemDict(**config['data_kwargs'])
@@ -108,15 +94,16 @@ def load_data_from_config(config, local=False, val_only=False, custom_kwargs={},
     train_gen = ChunkedTrainDataGeneratorHDF5(**config['data_kwargs'])
   # train_gen = TrainDataGeneratorHDF5(**config['data_kwargs'])
   if train_only:
+    print(f"Train only, class {data_class}, dir {data_directory}")
     return train_gen, None
-  val_data_kwargs = deepcopy(config['data_kwargs'])
-  val_data_kwargs.update(config['val_kwargs'])
-  print(val_data_kwargs)
-  val_gen = ValDataGeneratorHDF5(checkpoint_each_eval=True, **val_data_kwargs)
-  # if config['val_kwargs'].get('test_weighted_average', False):
-  #   print('Adding additional callback - shapshot val')
-  #   secondary_val_gen = val_data_class(checkpoint_each_eval=False, log_prefix='snapshot_val_', **val_data_kwargs)
-  #   val_gen = [val_gen, secondary_val_gen]
+  
+  # HARDCODE VAL KWARGS ---> ONLY EVALUATE ON CHR21
+  val_gen = ValDataGeneratorHDF5(batch_size=256, n_drop=50, directory=data_directory, train_dataset='train',
+                                 chrom='chr21')
+
   if val_only:
+    print(f"Val only, class ValDataGeneratorHDF5, dir {data_directory}")
     return None, val_gen
+  
+  print(f"Train class {data_class}, val class ValDataGeneratorHDF5, dir {data_directory}")
   return train_gen, val_gen

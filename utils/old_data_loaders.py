@@ -1,6 +1,7 @@
 import math
 import re
 import gc
+import os
 from itertools import islice
 from collections import namedtuple, defaultdict
 
@@ -271,7 +272,7 @@ class BaseDataGenerator(Sequence):
     self.dataset_fraction = fraction
 
   def load_gap_info(self):
-    self.gaps = pd.read_csv('{}gap.txt'.format(data_dir), sep='\t',
+    self.gaps = pd.read_csv(os.path.join(data_dir, 'gap.txt'), sep='\t',
                             names=['chromosome', 'start', 'end', 'chr_id',
                                    'gap_char','gap_len', 'gap_type', '-'])
     self.bins_with_gaps = defaultdict(list)
