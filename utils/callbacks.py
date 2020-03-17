@@ -112,7 +112,8 @@ class BatchedValidationCallback(Callback):
     logs = logs or {}
     logs.update(self._current_metrics)
     
-    print(f'Batch end, samples seen {self._samples_seen_since_last_saving} eval freq {self.eval_freq}')
+    if self.verbose == 2:
+      print(f'Batch end, samples seen {self._samples_seen_since_last_saving} eval freq {self.eval_freq}')
 
     if isinstance(self.eval_freq, int):
       self._samples_seen_since_last_saving += logs.get('size', 1)
