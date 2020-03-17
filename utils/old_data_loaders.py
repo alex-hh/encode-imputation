@@ -20,7 +20,7 @@ from utils.CONSTANTS import all_chromosomes, BINNED_CHRSZ, CHRSZ, train_cell2id,
 class DataLoaderLoggerMixin:
 
   def log_init(self):
-    print('Init {}'.format('.'.join([self.__module__, self.__name__])))
+    print('Init {}'.format('.'.join([self.__class__.__module__, self.__class__.__name__])))
 
   def log_params(self):
     # TODO - custom logging for each type of class
