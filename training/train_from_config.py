@@ -98,7 +98,7 @@ def main(expt_name, expt_set):
 
   start_epoch = 0
   if not TEST_RUN:
-    callbacks += [CSVLogger(os.path.join(output_dir, f'logs/{expt_set}/{expt_name}.csv', append=False)), # append=True - if file exists allows continued training
+    callbacks += [CSVLogger(os.path.join(output_dir, f'logs/{expt_set}/{expt_name}.csv'), append=False), # append=True - if file exists allows continued training
                   # ModelCheckpoint(epoch_checkpoint_path, monitor='loss', period=1), # TODO - maybe drop this.. not really necessary
                   ResumableTensorBoard(start_epoch*epoch_size,
                                        log_dir=os.path.join(output_dir, f'logs/{expt_set}/{expt_name}/'), update_freq=100000)

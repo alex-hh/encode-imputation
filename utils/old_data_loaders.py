@@ -17,6 +17,15 @@ from utils.CONSTANTS import all_chromosomes, BINNED_CHRSZ, CHRSZ, train_cell2id,
                             train_assay2id, data_dir, dataset_expts
 
 
+class DataLoaderLoggerMixin:
+
+  def log_init(self):
+    print('Init {}'.format('.'.join([self.__module__, self.__name__]))
+
+  def log_params(self):
+    # TODO - custom logging for each type of class
+    pass
+
 class BaseDataGenerator(Sequence):
   def __init__(self, track_resolution=25, dataset='train',
                chroms='all', expt_names='all', context_size=1025,
@@ -30,7 +39,7 @@ class BaseDataGenerator(Sequence):
     """
      For chr21 validation I was using dataset fraction (a bit small). The corresponding size (in bins) would be
     """
-    print('New data loader class')
+    # print('New data loader class')
     print('Transform:', transform)
     if chroms == 'all':
       chroms = all_chromosomes
@@ -312,11 +321,10 @@ class HDF5Generator:
   def __init__(self, directory=None, expt_names=None, include_var=False,
                use_backup=False, checkpoint_each_eval=True, log_prefix='val_',
                preload_files=False, dataset='train', train_dataset=None, **kwargs):
-    print('hdf5 gen init')
+
     if directory is None:
       directory = data_dir
 
-    print('chckpoint', checkpoint_each_eval)
     if hasattr(self, 'dataset_expts'):
       # self.expt_names = self.dataset_expts[self.dataset]
       pass
@@ -466,7 +474,7 @@ class HDF5Generator:
     all_avgs = np.concatenate(all_avgs, axis=-1)
     return all_avgs
 
-class HDF5InMemDict(HDF5Generator, BaseDataGenerator):
+class HDF5InMemDict(HDF5Generator, BaseDataGenerator, DataLoaderLoggerMixin):
   """
    Designed to be used without multiprocessing
    Costly step is load_datasets...but this only needs to run once per epoch
@@ -489,14 +497,13 @@ class HDF5InMemDict(HDF5Generator, BaseDataGenerator):
   """
   def __init__(self, *args, n_drop=50, n_predict=None, val_base_filename='{}_{}_targets.h5',
                train_dataset='train', dataset_name='targets', **kwargs):
-    print('hdf5 in mem init')
+    self.log_init()
     # dataset_fraction, load datasets will be called at this point
     # {}_selected_valbins.h5'
     self.n_drop = n_drop
     if n_predict is None:
       n_predict = n_drop
     self.n_predict = n_predict
-    print('val base', val_base_filename)
     self.val_base_filename = val_base_filename
     self.dataset_name = dataset_name
     assert self.n_predict <= self.n_drop, 'n predict must be lt n drop'
