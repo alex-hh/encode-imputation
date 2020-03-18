@@ -23,7 +23,6 @@
     "shuffle": true,
     "data_class": "TrainDataGeneratorHDF5",
     "batch_size": 256,
-    "split_file": null,
     "replace_gaps": true,
     "chrom": "chr21"
   },

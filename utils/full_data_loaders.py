@@ -41,9 +41,9 @@ class TrainDataGeneratorHDF5(Sequence, GapFilter):
 
   track_resolution = 25
 
-  def __init__(self, batch_size=256, split_file=None, n_drop=50,
-               directory=None, chrom='chr21', replace_gaps=False,
-               dataset='train', shuffle=True):
+  def __init__(self, batch_size=256, n_drop=50, directory=None,
+               chrom='chr21', replace_gaps=False, dataset='train',
+               shuffle=True):
     ## TODO add possibility to drop gaps
     self.config = locals()
     del self.config['self']

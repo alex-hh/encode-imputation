@@ -17,8 +17,8 @@ def get_epoch_size(config):
   """
    Use settings to infer the number of samples (datapoints) per epoch
   """
-  if 'dataset_size' in config['data_kwargs']:
-    epoch_size = config['data_kwargs']['dataset_size']
+  if 'epoch_size' in config['data_kwargs']:
+    epoch_size = config['data_kwargs']['epoch_size']
   else:
     epoch_size = BINNED_CHRSZ[config['data_kwargs']['chrom']]
   if 'n_samples' in config['train_kwargs']:

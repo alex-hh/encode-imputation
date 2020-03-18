@@ -20,14 +20,12 @@ OLD_DATA_SUPP = {'data_class': 'HDF5InMemDict',
 # note lack of gap replacement in the fully inmem data generator
 NEW_INMEM_SUPP = {'data_class': 'TrainDataGeneratorHDF5',
                   'batch_size': 256,
-                  'split_file': None,
                   'replace_gaps': True,
                   'chrom': 'chr21'}
 
 NEW_CHUNKED_SUPP = {'data_class': 'ChunkedTrainDataGeneratorHDF5',
                     'epoch_size': 1000000,
                     'replace_gaps': True,
-                    'split_file': None,
                     'chrom': 'chr21'}
 
 # TODO - handle directory as env var? or via settings?

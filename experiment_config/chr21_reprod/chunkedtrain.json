@@ -24,7 +24,6 @@
     "data_class": "ChunkedTrainDataGeneratorHDF5",
     "epoch_size": 1000000,
     "replace_gaps": true,
-    "split_file": null,
     "chrom": "chr21"
   },
   "val_kwargs": {
