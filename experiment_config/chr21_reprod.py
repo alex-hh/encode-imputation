@@ -13,7 +13,7 @@ OLD_DATA_SUPP = {'data_class': 'HDF5InMemDict',
                  'use_metaepochs': True,
                  'subsample_each_epoch': True,
                   # maybe look at avocado, avg, my models to see how consistent global rankings are across small samples
-                 'dataset_size': 1000000, # number of samples to load into mem to constitute one 'epoch'
+                 'epoch_size': 1000000, # number of samples to load into mem to constitute one 'epoch'
                  'replace_gaps': True,
                  'use_backup': False}
 
@@ -25,7 +25,7 @@ NEW_INMEM_SUPP = {'data_class': 'TrainDataGeneratorHDF5',
                   'chrom': 'chr21'}
 
 NEW_CHUNKED_SUPP = {'data_class': 'ChunkedTrainDataGeneratorHDF5',
-                    'dataset_size': 1000000,
+                    'epoch_size': 1000000,
                     'replace_gaps': True,
                     'split_file': None,
                     'chrom': 'chr21'}
@@ -37,14 +37,19 @@ cluster_dir = '/work/ahawkins/encodedata/'
 new_chunked_sett = copy.deepcopy(COMMON_BASE_SETTINGS)
 new_chunked_sett['data_kwargs'].update(NEW_CHUNKED_SUPP)
 save_train_config('chunkedtrain', new_chunked_sett, 'chr21_reprod')
+new_chunked_sett['data_kwargs']['replace_gaps'] = False
+save_train_config('chunkedtrain_incgaps', new_chunked_sett, 'chr21_reprod')
 
 new_inmem_sett = copy.deepcopy(COMMON_BASE_SETTINGS)
 new_inmem_sett['data_kwargs'].update(NEW_INMEM_SUPP)
 save_train_config('inmemtrain', new_inmem_sett, 'chr21_reprod')
+new_inmem_sett['data_kwargs']['replace_gaps'] = False
+save_train_config('inmemtrain_incgaps', new_inmem_sett, 'chr21_reprod')
 
 old_sett = copy.deepcopy(COMMON_BASE_SETTINGS)
 old_sett['data_kwargs'].update(OLD_DATA_SUPP)
-old_sett['train_kwargs']['n_samples'] = 14000000
 # save_train_config('chunkedtrain_cluster', old_sett, 'chr21_reprod')
 # old_sett['data_kwargs']['directory'] = gdrive_dir
 save_train_config('hdf5inmem', old_sett, 'chr21_reprod')
+old_sett['data_kwargs']['replace_gaps'] = False
+save_train_config('hdf5inmem_incgaps', old_sett, 'chr21_reprod')

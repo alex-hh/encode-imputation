@@ -21,11 +21,19 @@
     "n_drop": 50,
     "dataset": "train",
     "shuffle": true,
-    "data_class": "TrainDataGeneratorHDF5",
-    "batch_size": 256,
-    "split_file": null,
-    "replace_gaps": true,
-    "chrom": "chr21"
+    "data_class": "HDF5InMemDict",
+    "n_predict": 50,
+    "chroms": [
+      "chr21"
+    ],
+    "chunks_per_batch": 256,
+    "transform": null,
+    "custom_splits": false,
+    "use_metaepochs": true,
+    "subsample_each_epoch": true,
+    "epoch_size": 1000000,
+    "replace_gaps": false,
+    "use_backup": false
   },
   "val_kwargs": {
     "weighted_average": false,

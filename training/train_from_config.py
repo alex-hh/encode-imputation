@@ -19,9 +19,18 @@ def get_epoch_size(config):
   """
   if 'dataset_size' in config['data_kwargs']:
     epoch_size = config['data_kwargs']['dataset_size']
+  else:
+    epoch_size = BINNED_CHRSZ[config['data_kwargs']['chrom']]
+  if 'n_samples' in config['train_kwargs']:
     epochs = config['train_kwargs']['n_samples'] // epoch_size
   elif 'epochs' in config['train_kwargs']:
-    epoch_size = BINNED_CHRSZ[config['data_kwargs']['chrom']], epochs = config['train_kwargs'].get('epochs', 10)
+    # epochs is set by default in experiment_config/base_settings/common_base_settings
+    epochs = config['train_kwargs']['epochs']
+  else:
+    raise ValueError('either epochs or n_samples must be specified in train kwargs; neither found')
+
+  print(f'epoch size {epoch_size}, n epochs {epochs}')
+
     # dataset_fraction = config['data_kwargs'].get('dataset_fraction', 1)
     # chroms = config['data_kwargs']['chroms']
     # if chroms == 'all':

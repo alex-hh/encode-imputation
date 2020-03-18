@@ -24,7 +24,7 @@
     "data_class": "TrainDataGeneratorHDF5",
     "batch_size": 256,
     "split_file": null,
-    "replace_gaps": true,
+    "replace_gaps": false,
     "chrom": "chr21"
   },
   "val_kwargs": {

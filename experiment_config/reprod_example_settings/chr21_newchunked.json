@@ -31,7 +31,7 @@
     "split_file": null,
     "batch_size": 256,
     "data_class": "ChunkedTrainDataGeneratorHDF5",
-    "dataset_size": 1000000,
+    "epoch_size": 1000000,
     "replace_gaps": true
   },
   "val_kwargs": {

@@ -34,7 +34,7 @@ class BaseDataGenerator(Sequence):
                custom_splits=False, scaler=None, full_train=False,
                checkpoint_each_eval=False,
                debug=False, replace_gaps=False, subsample_each_epoch=False,
-               use_metaepochs=False, assay_average=False, dataset_size=None, data_format=None,
+               use_metaepochs=False, assay_average=False, epoch_size=None, data_format=None,
                avg_types=[], chunk_axis=False, constant_size=True, **kwargs):
     """
      For chr21 validation I was using dataset fraction (a bit small). The corresponding size (in bins) would be
@@ -80,7 +80,7 @@ class BaseDataGenerator(Sequence):
     self.genome_file = genome_file
     self.shuffle = shuffle
     self.use_metaepochs = use_metaepochs
-    self.dataset_size = dataset_size
+    self.epoch_size = epoch_size
     if use_metaepochs:
       subsample_each_epoch = True
     self.subsample_each_epoch = subsample_each_epoch
@@ -93,9 +93,9 @@ class BaseDataGenerator(Sequence):
     # self.shuffle_once = shuffle_once
     self.replace_gaps = replace_gaps
 
-    assert not ((dataset_fraction<1) and dataset_size is not None), 'Cant set both dataset fraction and dataset size'
-    self.use_reduced_dataset = (dataset_fraction < 1) or (dataset_size is not None)
-    if dataset_fraction < 1 or dataset_size is None:
+    assert not ((dataset_fraction<1) and epoch_size is not None), 'Cant set both dataset fraction and dataset size'
+    self.use_reduced_dataset = (dataset_fraction < 1) or (epoch_size is not None)
+    if dataset_fraction < 1 or epoch_size is None:
       # just take full chunks
       chunks_per_chrom = [math.floor(BINNED_CHRSZ[chrom]/self.measurements_per_chunk) for chrom in self.chroms]
     else:
@@ -244,8 +244,8 @@ class BaseDataGenerator(Sequence):
     else:
       self.chunk_indexes = np.arange(self.cum_chunks_per_chrom[-1])
     print(len(self.chunk_indexes), self.cum_chunks_per_chrom)
-    if self.dataset_size is not None:
-      self.total_n_chunks = min(self.dataset_size // self.measurements_per_chunk, len(self.chunk_indexes))
+    if self.epoch_size is not None:
+      self.total_n_chunks = min(self.epoch_size // self.measurements_per_chunk, len(self.chunk_indexes))
     else:
       self.total_n_chunks = math.floor(fraction * len(self.chunk_indexes))
     print('Total number of chunks to be used in {}: {} of {} possible ungapped chunks, of {} possible total chunks'.format(self.dataset, self.total_n_chunks,
@@ -556,7 +556,7 @@ class HDF5InMemDict(HDF5Generator, BaseDataGenerator, DataLoaderLoggerMixin):
       print('Loading {} data for chrom {} from file {}'.format(self.dataset, chrom, h5_filename))
       with h5py.File(chrom_f, 'r') as h5f:
         # why self.measurements_per_chunk=1 here? this is never the case...
-        if self.dataset_fraction == 1 and self.dataset_size is None:
+        if self.dataset_fraction == 1 and self.epoch_size is None:
           print('Loading full target dataset')
           chunk_targets = h5f[self.dataset_name][:BINNED_CHRSZ[chrom]]
           # chunk_targets = h5f['targets'][:BINNED_CHRSZ[chrom]]
@@ -584,7 +584,7 @@ class HDF5InMemDict(HDF5Generator, BaseDataGenerator, DataLoaderLoggerMixin):
         print('Loading train (i.e. input) data for chrom {}'.format(chrom))
 
         with h5py.File(chrom_train_f, 'r') as h5f:
-          if self.dataset_fraction == 1 and self.dataset_size is None:
+          if self.dataset_fraction == 1 and self.epoch_size is None:
             print('Loading full dataset')
             all_train_x_chunks.append(h5f['targets'][:BINNED_CHRSZ[chrom]])
           else:

@@ -16,4 +16,5 @@ COMMON_BASE_SETTINGS = {'model_kwargs': {'model_class': 'DAE',
                         'train_kwargs': {'loss': 'cauchy5',
                                          'optimizer': 'adam',
                                          'lr': 3e-4,
-                                         'seed': 211}}
+                                         'seed': 211,
+                                         'epochs': 14}}

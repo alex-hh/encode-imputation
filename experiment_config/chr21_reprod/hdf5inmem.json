@@ -31,7 +31,7 @@
     "custom_splits": false,
     "use_metaepochs": true,
     "subsample_each_epoch": true,
-    "dataset_size": 1000000,
+    "epoch_size": 1000000,
     "replace_gaps": true,
     "use_backup": false
   },
@@ -44,6 +44,6 @@
     "optimizer": "adam",
     "lr": 0.0003,
     "seed": 211,
-    "n_samples": 14000000
+    "epochs": 14
   }
 }

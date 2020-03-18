@@ -12,7 +12,32 @@ from utils.CONSTANTS import all_chromosomes, BINNED_CHRSZ, CHRSZ, train_cell2id,
                             train_assay2id, data_dir, dataset_expts
 
 
-class TrainDataGeneratorHDF5(Sequence):
+class GapFilter:
+
+  def exclude_gaps(self):
+    self.gaps = pd.read_csv(os.path.join(data_dir, 'gap.txt'), sep='\t',
+                            names=['chromosome', 'start', 'end', 'chr_id',
+                                   'gap_char','gap_len', 'gap_type', '-'])
+    self.bins_with_gaps = []
+    chunk_indexes = []
+    chrom_gaps = self.gaps[self.gaps['chromosome']==self.chrom]
+    print(len(chrom_gaps))
+    end_chunk = 0
+
+    for ix, row in chrom_gaps.iterrows():
+      start_bin = row['start'] // self.track_resolution
+      end_bin = row['end'] // self.track_resolution
+      self.bins_with_gaps += [b for b in range(start_bin, end_bin+1)]
+    
+    print('Excluding {} bins with gaps'.format(len(self.bins_with_gaps)))
+    mask = np.ones(self.train_x.shape[0], dtype=bool) # all elements included/True.
+    mask[self.bins_with_gaps] = False  # Set unwanted elements to False
+    self.train_x = self.train_x[mask]
+    if hasattr(self, 'val_x'):
+      self.val_x = self.val_x[mask]
+
+
+class TrainDataGeneratorHDF5(Sequence, GapFilter):
 
   track_resolution = 25
 
@@ -48,26 +73,6 @@ class TrainDataGeneratorHDF5(Sequence):
 
   def __len__(self):
     return math.ceil(self.train_x.shape[0]/self.batch_size)
-
-  def exclude_gaps(self):
-    self.gaps = pd.read_csv(os.path.join(data_dir, 'gap.txt'), sep='\t',
-                            names=['chromosome', 'start', 'end', 'chr_id',
-                                   'gap_char','gap_len', 'gap_type', '-'])
-    self.bins_with_gaps = []
-    chunk_indexes = []
-    chrom_gaps = self.gaps[self.gaps['chromosome']==self.chrom]
-    print(len(chrom_gaps))
-    end_chunk = 0
-
-    for ix, row in chrom_gaps.iterrows():
-      start_bin = row['start'] // self.track_resolution
-      end_bin = row['end'] // self.track_resolution
-      self.bins_with_gaps += [b for b in range(start_bin, end_bin+1)]
-    
-    print('Excluding {} bins'.format(len(self.bins_with_gaps)))
-    mask = np.ones(self.train_x.shape[0], dtype=bool) # all elements included/True.
-    mask[self.bins_with_gaps] = False  # Set unwanted elements to False
-    self.train_x = self.train_x[mask]
     # https://stackoverflow.com/questions/12518043/numpy-indexing-return-the-rest
 
   def on_epoch_end(self):
@@ -99,11 +104,13 @@ class TrainDataGeneratorHDF5(Sequence):
 
     return batch_dict, batch_y
 
-class ValDataGeneratorHDF5(Sequence):
+class ValDataGeneratorHDF5(Sequence, GapFilter):
+
+  track_resolution = 25
 
   def __init__(self, batch_size=256, n_drop=50,
                directory=None, train_dataset='train',
-               chrom='chr21'):
+               chrom='chr21', replace_gaps=False):
     self.config = locals()
     del self.config['self']
     if directory is None:
@@ -126,6 +133,9 @@ class ValDataGeneratorHDF5(Sequence):
     with h5py.File(val_chrom_f, 'r') as h5f:
       self.val_x = h5f['targets'][:BINNED_CHRSZ[chrom]]
       self.val_expt_names = dataset_expts['val']
+
+    if replace_gaps:
+      self.exclude_gaps()
 
     print('INPUTS SHAPE', self.train_x.shape)
     print('TARGETS SHAPE', self.val_x.shape)
@@ -158,8 +168,10 @@ class ValDataGeneratorHDF5(Sequence):
 
 class TestDataGeneratorHDF5(Sequence):
 
+  track_resolution = 25
+
   def __init__(self, train_dataset='train', batch_size=256, n_drop=50,
-               directory=None, chrom='chr21'):
+               directory=None, chrom='chr21', replace_gaps=False):
     self.config = locals()
     del self.config['self']
     if directory is None:
@@ -176,6 +188,9 @@ class TestDataGeneratorHDF5(Sequence):
     print('Loading test input data for chrom {} from file {}'.format(chrom, h5_filename))
     with h5py.File(chrom_f, 'r') as h5f:
       self.train_x = h5f['targets'][:BINNED_CHRSZ[chrom]]
+
+    if replace_gaps:
+      self.exclude_gaps()
 
   def __len__(self):
     return math.ceil(self.train_x.shape[0]/self.batch_size)

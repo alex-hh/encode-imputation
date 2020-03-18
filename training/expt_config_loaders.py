@@ -99,7 +99,7 @@ def load_data_from_config(config, local=False, val_only=False, custom_kwargs={},
   
   # HARDCODE VAL KWARGS ---> ONLY EVALUATE ON CHR21
   val_gen = ValDataGeneratorHDF5(batch_size=256, n_drop=50, directory=data_directory, train_dataset='train',
-                                 chrom='chr21')
+                                 chrom='chr21', replace_gaps=config['data_kwargs'].get('replace_gaps', True))
 
   if val_only:
     print(f"Val only, class ValDataGeneratorHDF5, dir {data_directory}")

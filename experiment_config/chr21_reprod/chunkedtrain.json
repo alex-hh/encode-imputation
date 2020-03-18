@@ -22,7 +22,7 @@
     "dataset": "train",
     "shuffle": true,
     "data_class": "ChunkedTrainDataGeneratorHDF5",
-    "dataset_size": 1000000,
+    "epoch_size": 1000000,
     "replace_gaps": true,
     "split_file": null,
     "chrom": "chr21"
@@ -35,6 +35,7 @@
     "loss": "cauchy5",
     "optimizer": "adam",
     "lr": 0.0003,
-    "seed": 211
+    "seed": 211,
+    "epochs": 14
   }
 }
