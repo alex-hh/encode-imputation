@@ -7,6 +7,7 @@ import pandas as pd
 
 from utils.full_data_loaders import TestDataGeneratorHDF5, ValDataGeneratorHDF5
 from utils.CONSTANTS import data_dir, output_dir, config_dir, dataset_expts, BINNED_CHRSZ, n_val_expts
+from models.metrics import PearsonCorrelation
 from training.expt_config_loaders import load_models_from_config
 
 
@@ -67,29 +68,15 @@ def main(model_name, expt_set, chrom, checkpoint_code, outfmt='npz', dataset='va
   else:
     raise Exception('dataset must be either train or val')
 
-  _, model = load_models_from_config(config_file, val_n_tracks=len(pred_track_names))
-  if moving_average:
-    print('Looking for weighted average checkpoint')
+  # TODO: add additional metrics
+  _, model = load_models_from_config(config_file, val_n_tracks=len(pred_track_names), extra_metrics=[PearsonCorrelation()])
   checkpoint = find_checkpoint(model_name, expt_set, checkpoint_code, moving_avg=moving_average)
   print('Loading checkpoint', checkpoint)
   model.load_weights(checkpoint)
 
   # print('Making predictions')
-  preds = model.predict_generator(data_gen, verbose=1, steps=5 if TEST_RUN else None)
-  print('Pred shape', preds.shape)
-  preds = np.squeeze(preds)
-  print('Squeezed pred shape', preds.shape)
-
-  imp_dir = os.path.join(output_dir, '{}_imputations/{}/{}/'.format(dataset, expt_set, model_name))
-  os.makedirs(imp_dir, exist_ok=True)
-  
-  print('Saving preds')
-  assert len(pred_track_names) == preds.shape[1], 'check names - length of name list doesnt match data'
-  for track_name, track_vals in zip(pred_track_names, preds.T):
-    np.savez_compressed(os.path.join(imp_dir, '{}.{}.{}.npz'.format(track_name, chrom, checkpoint_code)), track_vals.reshape(-1))
-
-  print('Done')
-
+  corr = model.evaluate_generator(data_gen, verbose=1, steps=5 if TEST_RUN else None)
+  print(corr)
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()

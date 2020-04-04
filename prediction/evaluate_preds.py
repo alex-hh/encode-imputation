@@ -5,7 +5,7 @@ from utils.CONSTANTS import dataset_expts, data_dir, output_dir
 
 
 def main(model_name, expt_set, chrom, checkpoint_code, dataset='val', expt_suffix=None, gt_file_type='h5'):
-  expt_dir = output_dir + '{}_imputations/{}/{}/'.format(dataset, expt_set, model_name) 
+  expt_dir = os.path.join(output_dir, '{}_imputations/{}/{}/'.format(dataset, expt_set, model_name))
   th = TrackHandler(dataset=dataset, dataset_dir=expt_dir, chroms=[chrom], transform=None,
                     expt_suffix='.{}.npz'.format(checkpoint_code) if expt_suffix is None else expt_suffix)
 
@@ -15,9 +15,9 @@ def main(model_name, expt_set, chrom, checkpoint_code, dataset='val', expt_suffi
   for e in expt_dict['global'].keys():
     print('{}:\t{}'.format(e, expt_dict['global'][e][chrom]))
   
-  eval_metrics_dir = output_dir + 'eval_metrics/' + expt_set
+  eval_metrics_dir = os.path.join(output_dir, 'eval_metrics/' + expt_set)
   os.makedirs(eval_metrics_dir, exist_ok=True)
-  th.save_mses(eval_metrics_dir + '/{}_{}_{}_{}_metrics.csv'.format(model_name, dataset, chrom, checkpoint_code))
+  th.save_mses(os.path.join(eval_metrics_dir, '{}_{}_{}_{}_metrics.csv'.format(model_name, dataset, chrom, checkpoint_code)))
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()

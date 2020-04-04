@@ -14,7 +14,7 @@ def find_checkpoint(model_name, expt_set, checkpoint_code, moving_avg=False, wei
   # find the path of the desired weight file
   if weights_dir is None:
     weights_dir = output_dir
-  checkpoint_path = '{}weights/{}/{}_*{}{}*.hdf5'.format(output_dir, expt_set, model_name, checkpoint_code, '-ewa' if moving_avg else '')
+  checkpoint_path = os.path.join(output_dir, 'weights/{}/{}_ep{}{}*.hdf5'.format(expt_set, model_name, checkpoint_code, '-ewa' if moving_avg else ''))
   checkpoints = glob.glob(checkpoint_path)
   assert len(checkpoints) == 1, 'check checkpoints : found {} : {}'.format(len(checkpoints), checkpoints, checkpoint_path)
   return checkpoints[0]
@@ -59,13 +59,13 @@ def main(model_name, expt_set, chrom, checkpoint_code=14, outfmt='npz', dataset=
   preds = np.squeeze(preds)
   print('Squeezed pred shape', preds.shape)
 
-  imp_dir = output_directory+'{}_imputations/{}/{}/'.format(dataset, expt_set, model_name)
+  imp_dir = os.path.join(output_directory, '{}_imputations/{}/{}/'.format(dataset, expt_set, model_name))
   os.makedirs(imp_dir, exist_ok=True)
   
   print('Saving preds')
   assert n_predict == preds.shape[1], 'check names - length of name list doesnt match data'
   for track_name, track_vals in zip(dataset_expts[dataset], preds.T):
-    np.savez_compressed(imp_dir + '{}.{}.{}.npz'.format(track_name, chrom, checkpoint_code), track_vals.reshape(-1))
+    np.savez_compressed(os.path.join(imp_dir, '{}.{}.{}.npz'.format(track_name, chrom, checkpoint_code), track_vals.reshape(-1)))
 
   print('Done')
 
