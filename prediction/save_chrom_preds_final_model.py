@@ -67,7 +67,7 @@ def main(model_name, expt_set, chrom, checkpoint_code=14, outfmt='npz', dataset=
   print('Saving preds')
   assert n_predict == preds.shape[1], 'check names - length of name list doesnt match data'
   for track_name, track_vals in zip(dataset_expts[dataset], preds.T):
-    np.savez_compressed(os.path.join(imp_dir, '{}.{}.{}.npz'.format(track_name, chrom, checkpoint_code), track_vals.reshape(-1)))
+    np.savez_compressed(os.path.join(imp_dir, '{}.{}.{}.npz'.format(track_name, chrom, checkpoint_code)), track_vals.reshape(-1))
 
   print('Done')
 
