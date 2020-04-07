@@ -76,7 +76,7 @@ def main(train_dataset, expt_set, model_name=None, chrom='chr21', test_run=False
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument('expt_set')
+  parser.add_argument('--expt_set', type=str, default='chr21_reprod')
   parser.add_argument('--replace_gaps', action='store_true')
   parser.add_argument('--train_dataset', default='train')
   parser.add_argument('--eval_freq', type=int, default=1000000)

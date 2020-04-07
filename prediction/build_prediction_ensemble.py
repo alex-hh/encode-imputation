@@ -45,12 +45,12 @@ def main(expt_set, checkpoint_code, dataset='test', pred_chroms=['chr21'],
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument('expt_set')
   parser.add_argument('-chrom_list', nargs='+', required=False, help="Chromosome list e.g. chr1 chr3; specify 'all' to include all chroms")
   parser.add_argument('-weights_names', nargs='+', required=False, help="Names of weight files to use to generate predictions")
   parser.add_argument('--checkpoint_code', default='14') # ep07.1
   # parser.add_argument('-model_list', nargs='+', required=True)
   parser.add_argument('--dataset', default='test')
+  parser.add_argument('--expt_set', type=str, default='chr21_reprod')
   parser.add_argument('--train_dataset', default='all')
   parser.add_argument('--moving_average', action='store_true')
   parser.add_argument('--all_chroms', action='store_true')

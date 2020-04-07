@@ -23,16 +23,13 @@ def main(model_name, expt_set, checkpoint_code, dataset='test', pred_chroms=['ch
     # gather predictions for all chromosomes for given track into a single bigwig file
     save_bigwig(model_name, expt_set, checkpoint_code, track, dataset=dataset, chroms=pred_chroms)
 
-
-
-
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('model_name')
-  parser.add_argument('expt_set') # name of folder in which model weights are saved, and in which predictions are to be saved
   parser.add_argument('checkpoint_code') # ep07.1
   # parser.add_argument('-model_list', nargs='+', required=True)
   parser.add_argument('-chroms', nargs='+', default=['chr21'])
   parser.add_argument('--dataset', default='test')
+  parser.add_argument('--expt_set', type=str, default='chr21_reprod') # name of folder in which model weights are saved, and in which predictions are to be saved
   args = parser.parse_args()
   main(args.model_name, args.expt_set, args.checkpoint_code, dataset=args.dataset, pred_chroms=args.chroms)
