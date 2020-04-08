@@ -9,7 +9,7 @@ from keras.optimizers import Adam
 
 from models import DAE, cauchy5
 from utils.callbacks import EpochTimer, ResumableTensorBoard, MovingAverageVal, MovingAverageCheckpoint
-from training.expt_config_loaders import get_checkpoint_callbacks, get_validation_callbacks, save_train_config
+from training.expt_config_loaders import get_checkpoint_callbacks, get_validation_callbacks
 from utils.chunked_data_loaders import ChunkedTrainDataGeneratorHDF5
 from utils.full_data_loaders import ValDataGeneratorHDF5
 from utils.CONSTANTS import data_dir, output_dir
@@ -43,11 +43,12 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
   train_gen = ChunkedTrainDataGeneratorHDF5(n_drop=50, chrom=chrom, batch_size=256,
                                             dataset_size=dataset_size, replace_gaps=True,
                                             directory=data_directory)
-  save_train_config(expt_set, model_name, model, train_gen,
-                    weighted_average=weighted_average, eval_freq=eval_freq,
-                    train_kwargs={'epochs': epochs, 'dataset_size': dataset_size,
-                                  'loss': 'cauchy5', 'optimizer': 'adam',
-                                  'lr': 0.0003, 'seed': seed})
+  # from training.expt_config_savers import save_train_config
+  # save_train_config(expt_set, model_name, model, train_gen,
+  #                   weighted_average=weighted_average, eval_freq=eval_freq,
+  #                   train_kwargs={'epochs': epochs, 'dataset_size': dataset_size,
+  #                                 'loss': 'cauchy5', 'optimizer': 'adam',
+  #                                 'lr': 0.0003, 'seed': seed})
 
   checkpoint_folder = os.path.join(output_directory, 'weights', '' if expt_set is None else expt_set)
   os.makedirs(checkpoint_folder, exist_ok=True)
