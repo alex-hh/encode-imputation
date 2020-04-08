@@ -17,7 +17,11 @@ from utils.CONSTANTS import data_dir, output_dir
 
 def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=False,
          weighted_average=False, save_logs=False, eval_freq=1000000, epochs=20,
-         dataset_size=1000000, seed=211):
+         dataset_size=1000000, seed=211, data_directory=None, output_directory=None):
+  if data_directory is None:
+    data_directory = data_dir
+  if output_directory is None:
+    output_directory = output_dir
   if model_name is None:
     model_name = '{}_{}'.format(chrom, train_dataset)
   if train_dataset=='full':
@@ -38,14 +42,14 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
 
   train_gen = ChunkedTrainDataGeneratorHDF5(n_drop=50, chrom=chrom, batch_size=256,
                                             dataset_size=dataset_size, replace_gaps=True,
-                                            directory=data_dir)
+                                            directory=data_directory)
   save_train_config(expt_set, model_name, model, train_gen,
                     weighted_average=weighted_average, eval_freq=eval_freq,
                     train_kwargs={'epochs': epochs, 'dataset_size': dataset_size,
                                   'loss': 'cauchy5', 'optimizer': 'adam',
                                   'lr': 0.0003, 'seed': seed})
 
-  checkpoint_folder = os.path.join(output_dir, 'weights', '' if expt_set is None else expt_set)
+  checkpoint_folder = os.path.join(output_directory, 'weights', '' if expt_set is None else expt_set)
   os.makedirs(checkpoint_folder, exist_ok=True)
   callbacks = [EpochTimer()] # does what it sounds like
 
@@ -53,7 +57,8 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
     # callbacks monitor metrics on val set (for training chromosome) as well as saving checkpoints
     val_model = model.models[45]
     val_model.compile(loss='mse', optimizer=Adam())
-    val_gen = ValDataGeneratorHDF5(train_dataset=train_dataset, chrom=chrom, batch_size=256)
+    val_gen = ValDataGeneratorHDF5(train_dataset=train_dataset, chrom=chrom, batch_size=256,
+                                   directory=data_directory)
     callbacks += get_validation_callbacks(val_model, val_gen, checkpoint_folder, model_name,
                                           weighted_average=weighted_average, eval_freq=dataset_size,
                                           test_run=test_run, verbose=2 if test_run else 1)
@@ -62,9 +67,9 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
     callbacks += get_checkpoint_callbacks(checkpoint_folder, model_name, weighted_average=weighted_average)
 
   if save_logs and not test_run:
-    callbacks += [CSVLogger(os.path.join(output_dir, 'logs', '' if expt_set is None else expt_set, '{}.csv'.format(model_name)), append=False),
+    callbacks += [CSVLogger(os.path.join(output_directory, 'logs', '' if expt_set is None else expt_set, '{}.csv'.format(model_name)), append=False),
                   ResumableTensorBoard(0,
-                                       log_dir=os.path.join(output_dir, 'logs', '' if expt_set is None else expt_set, model_name),
+                                       log_dir=os.path.join(output_directory, 'logs', '' if expt_set is None else expt_set, model_name),
                                        update_freq=100000)
                   ]
 
@@ -84,9 +89,11 @@ if __name__ == '__main__':
   parser.add_argument('--weighted_average', action='store_true')
   parser.add_argument('--save_logs', action='store_true')
   parser.add_argument('--seed', default=211, type=int)
+  parser.add_argument('--data_directory', type=str, default=None)
+  parser.add_argument('--output_directory', type=str, default=None)
   args = parser.parse_args()
   print(args)
   main(args.train_dataset, expt_set=args.expt_set, model_name=args.model_name,
        chrom=args.chrom, test_run=args.test_run, weighted_average=args.weighted_average,
        save_logs=args.save_logs, eval_freq=args.eval_freq, epochs=args.epochs,
-       seed=args.seed)
+       seed=args.seed, data_directory=args.data_directory, output_directory=args.output_directory)
