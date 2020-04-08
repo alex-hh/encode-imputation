@@ -98,4 +98,4 @@ if __name__ == '__main__':
        chrom=args.chrom, test_run=args.test_run, weighted_average=args.weighted_average,
        save_logs=args.save_logs, eval_freq=args.eval_freq, epochs=args.epochs,
        seed=args.seed, data_directory=args.data_directory, output_directory=args.output_directory,
-       epoch_size=epoch_size)
+       epoch_size=args.epoch_size)
