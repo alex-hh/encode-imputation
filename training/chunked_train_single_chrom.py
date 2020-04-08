@@ -17,7 +17,7 @@ from utils.CONSTANTS import data_dir, output_dir
 
 def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=False,
          weighted_average=False, save_logs=False, eval_freq=1000000, epochs=20,
-         dataset_size=1000000, seed=211, data_directory=None, output_directory=None):
+         epoch_size=1000000, seed=211, data_directory=None, output_directory=None):
   if data_directory is None:
     data_directory = data_dir
   if output_directory is None:
@@ -41,7 +41,7 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
   train_model.compile(loss=cauchy5, optimizer=Adam(lr=0.0003))
 
   train_gen = ChunkedTrainDataGeneratorHDF5(n_drop=50, chrom=chrom, batch_size=256,
-                                            dataset_size=dataset_size, replace_gaps=True,
+                                            epoch_size=epoch_size, replace_gaps=True,
                                             directory=data_directory)
   # from training.expt_config_savers import save_train_config
   # save_train_config(expt_set, model_name, model, train_gen,
@@ -82,7 +82,7 @@ if __name__ == '__main__':
   parser.add_argument('--expt_set', type=str, default=None)
   parser.add_argument('--train_dataset', default='train')
   parser.add_argument('--eval_freq', type=int, default=1000000)
-  parser.add_argument('--dataset_size', type=int, default=1000000)
+  parser.add_argument('--epoch_size', type=int, default=1000000)
   parser.add_argument('--epochs', type=int, default=14)
   parser.add_argument('--model_name', default=None)
   parser.add_argument('--chrom', default='chr21')
@@ -97,4 +97,5 @@ if __name__ == '__main__':
   main(args.train_dataset, expt_set=args.expt_set, model_name=args.model_name,
        chrom=args.chrom, test_run=args.test_run, weighted_average=args.weighted_average,
        save_logs=args.save_logs, eval_freq=args.eval_freq, epochs=args.epochs,
-       seed=args.seed, data_directory=args.data_directory, output_directory=args.output_directory)
+       seed=args.seed, data_directory=args.data_directory, output_directory=args.output_directory,
+       epoch_size=epoch_size)
