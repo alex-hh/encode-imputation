@@ -10,7 +10,7 @@ from keras.callbacks import CSVLogger
 from keras.optimizers import Adam
 
 from models import DAE, cauchy5
-from training.train_config_helpers import get_checkpoint_callbacks, get_validation_callbacks, save_train_config
+from training.expt_config_loaders import get_checkpoint_callbacks, get_validation_callbacks, save_train_config
 from utils.callbacks import EpochTimer, ResumableTensorBoard, MovingAverageVal, MovingAverageCheckpoint
 from utils.full_data_loaders import TrainDataGeneratorHDF5, ValDataGeneratorHDF5, TestDataGeneratorHDF5
 from utils.CONSTANTS import data_dir, output_dir, BINNED_CHRSZ
@@ -81,7 +81,7 @@ if __name__ == '__main__':
   parser.add_argument('--train_dataset', default='train')
   parser.add_argument('--eval_freq', type=int, default=1000000)
   parser.add_argument('--epochs', type=int, default=None)
-  parser.add_argument('--n_samples', type=int, default=20000000)
+  parser.add_argument('--n_samples', type=int, default=14000000)
   parser.add_argument('--model_name', default=None)
   parser.add_argument('--chrom', default='chr21')
   parser.add_argument('--test_run', action='store_true')

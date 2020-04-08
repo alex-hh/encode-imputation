@@ -13,7 +13,8 @@ from prediction.save_bigwig import main as save_bigwig
 def main(model_name, expt_set, checkpoint_code, dataset='test', train_dataset='all', pred_chroms=['chr21']):
   for pred_chrom in pred_chroms:
     print('Saving preds for model {} on chromosome {}'.format(model_name, pred_chrom))
-    save_model_chrom_preds(model_name, expt_set, pred_chrom, checkpoint_code, dataset=dataset, train_dataset=train_dataset)
+    save_model_chrom_preds(model_name, expt_set, pred_chrom, checkpoint_code=checkpoint_code,
+                           dataset=dataset, train_dataset=train_dataset)
     print('Evaluating preds')
     evaluate_preds(model_name, expt_set, pred_chrom, checkpoint_code)
 

@@ -6,20 +6,10 @@ import numpy as np
 import pandas as pd
 
 from models import DAE, cauchy5
+from models.model_utils import find_checkpoint
 from utils.full_data_loaders import TestDataGeneratorHDF5, ValDataGeneratorHDF5
 from utils.CONSTANTS import dataset_expts, BINNED_CHRSZ, data_dir, output_dir
 
-
-def find_checkpoint(model_name, expt_set, checkpoint_code, moving_avg=False, weights_dir=None):
-  # find the path of the desired weight file
-  if weights_dir is None:
-    weights_dir = output_dir
-  print('Searching for checkpoints in dir', weights_dir)
-  checkpoint_path = os.path.join(output_dir, 'weights/{}/{}_ep{}{}*.hdf5'.format(expt_set, model_name, checkpoint_code, '-ewa' if moving_avg else ''))
-  print('Searching for checkpoints matching', checkpoint_path)
-  checkpoints = glob.glob(checkpoint_path)
-  assert len(checkpoints) == 1, 'check checkpoints : found {} : {}'.format(len(checkpoints), checkpoints, checkpoint_path)
-  return checkpoints[0]
 
 def main(model_name, expt_set, chrom, checkpoint_code=14, outfmt='npz', dataset='test', 
          train_dataset='all', moving_average=False, output_directory=None, data_directory=None):

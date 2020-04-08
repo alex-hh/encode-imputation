@@ -5,6 +5,7 @@ import h5py
 import numpy as np
 import pandas as pd
 
+from models.model_utils import find_checkpoint
 from utils.full_data_loaders import TestDataGeneratorHDF5, ValDataGeneratorHDF5
 from utils.CONSTANTS import data_dir, output_dir, config_dir, dataset_expts, BINNED_CHRSZ, n_val_expts
 from training.expt_config_loaders import load_models_from_config
@@ -12,13 +13,6 @@ from training.expt_config_loaders import load_models_from_config
 
 # TEST_RUN = data_dir in ['data/', 'data']
 TEST_RUN = False
-
-def find_checkpoint(model_name, expt_set, checkpoint_code, moving_avg=False):
-  # find the path of the desired weight file
-  checkpoint_path = os.path.join(output_dir, 'weights/{}/{}_ep{}{}*.hdf5'.format(expt_set, model_name, checkpoint_code, '-ewa' if moving_avg else ''))
-  checkpoints = glob.glob(checkpoint_path)
-  assert len(checkpoints) == 1, 'check checkpoints : found {} : {}'.format(len(checkpoints), checkpoints, checkpoint_path)
-  return checkpoints[0]
 
 def get_train_track_names(train_dataset='all'):
   if train_dataset == 'train':
