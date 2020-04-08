@@ -22,7 +22,12 @@ def get_train_track_names(train_dataset='all'):
   else:
     raise Exception('Train dataset must be either train or all')
 
-def main(model_name, expt_set, chrom, checkpoint_code, outfmt='npz', dataset='val'):
+def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', dataset='val'):
+  """
+    expt_set must be specified in this case, because we're loading config which for now assumes an expt_set subdirectory
+  """
+  if expt_set is None:
+    raise NotImplementedError()
   model_name = model_name.split('/')[-1]
   print('Saving preds for {} on {} to {}'.format(model_name, dataset, output_dir))
   
@@ -64,7 +69,7 @@ def main(model_name, expt_set, chrom, checkpoint_code, outfmt='npz', dataset='va
   _, model = load_models_from_config(config_file, val_n_tracks=len(pred_track_names))
   if moving_average:
     print('Looking for weighted average checkpoint')
-  checkpoint = find_checkpoint(model_name, expt_set, checkpoint_code, moving_avg=moving_average)
+  checkpoint = find_checkpoint(model_name, expt_set=expt_set, checkpoint_code=checkpoint_code, moving_avg=moving_average)
   print('Loading checkpoint', checkpoint)
   model.load_weights(checkpoint)
 
@@ -74,13 +79,14 @@ def main(model_name, expt_set, chrom, checkpoint_code, outfmt='npz', dataset='va
   preds = np.squeeze(preds)
   print('Squeezed pred shape', preds.shape)
 
-  imp_dir = os.path.join(output_dir, '{}_imputations/{}/{}/'.format(dataset, expt_set, model_name))
+  imp_dir = os.path.join(output_dir, '{}_imputations'.format(dataset), '' if expt_set is None else expt_set, model_name)
   os.makedirs(imp_dir, exist_ok=True)
   
   print('Saving preds')
+  checkpoint_str = '' if checkpoint_code is None else '.' + str(checkpoint_code)
   assert len(pred_track_names) == preds.shape[1], 'check names - length of name list doesnt match data'
   for track_name, track_vals in zip(pred_track_names, preds.T):
-    np.savez_compressed(os.path.join(imp_dir, '{}.{}.{}.npz'.format(track_name, chrom, checkpoint_code)), track_vals.reshape(-1))
+    np.savez_compressed(os.path.join(imp_dir, '{}.{}{}.npz'.format(track_name, chrom, checkpoint_str)), track_vals.reshape(-1))
 
   print('Done')
 
@@ -88,9 +94,9 @@ def main(model_name, expt_set, chrom, checkpoint_code, outfmt='npz', dataset='va
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('model_name')
-  parser.add_argument('expt_set')
   parser.add_argument('chrom')
-  parser.add_argument('checkpoint_code') # ep07.1
   parser.add_argument('dataset')
+  parser.add_argument('--expt_set', type=str, default=None)
+  parser.add_argument('--checkpoint_code', type=str, default=None)
   args = parser.parse_args()
-  main(args.model_name, args.expt_set, args.chrom, args.checkpoint_code, dataset=args.dataset)
+  main(args.model_name, args.chrom, expt_set=args.expt_set, dataset=args.dataset, checkpoint_code=args.checkpoint_code)

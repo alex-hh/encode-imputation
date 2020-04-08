@@ -36,10 +36,10 @@ if __name__ == '__main__':
   # load filenames
   parser = argparse.ArgumentParser()
   parser.add_argument('bw_file')
-  parser.add_argument('--chrom', nargs='+', # chr3 chr21
-                      default=['all'])
+  parser.add_argument('--chroms', nargs='+', # chr3 chr21
+                      default=['chr21'])
   parser.add_argument('--uncompressed', action='store_true')
   args = parser.parse_args()
   if args.chrom == ['all']:
       args.chrom = ['chr' + str(i) for i in range(1, 23)] + ['chrX']
-  main(bw_file, args.chrom, uncompressed=args.uncompressed)
+  main(bw_file, args.chroms, uncompressed=args.uncompressed)

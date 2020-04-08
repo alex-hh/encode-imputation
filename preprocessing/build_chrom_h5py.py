@@ -1,4 +1,4 @@
-import argparse
+import os, argparse
 import h5py
 
 from utils.CONSTANTS import all_chromosomes, n_expts, data_dir, BINNED_CHRSZ
@@ -15,11 +15,11 @@ def main(dataset, chrom, directory=None):
 
   print('Loading tracks', flush=True)
   th = TrackHandler(dataset=dataset, chroms=[chrom],
-                    dataset_dir=directory + '{}/'.format('training' if dataset=='train' else 'validation/'))
+                    dataset_dir=os.path.join(directory, '{}/'.format('training' if dataset=='train' else 'validation/')))
   th.load_datasets()
 
   ## TODO - individual script for each expt?
-  with h5py.File(directory + '{}_{}_targets.h5'.format(chrom, dataset), 'w') as h5f:
+  with h5py.File(os.path.join(directory,'{}_{}_targets.h5'.format(chrom, dataset)), 'w') as h5f:
     h5f.create_dataset('targets', shape=(chrom_len, n_obs), chunks=(100, n_obs), compression='lzf')
     for i, expt_name in enumerate(th.expt_names):
       print(expt_name, flush=True)

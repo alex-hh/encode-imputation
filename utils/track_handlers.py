@@ -1,4 +1,4 @@
-import glob, re
+import glob, re, os
 import itertools
 from collections import defaultdict
 
@@ -33,8 +33,8 @@ class BigWig:
       self.base = expt_name[:-7]
       expt_name = self.base.split('/')[-1]
     else:
-      self.base = data_dir + data_folder + expt_name
-      self.track = data_dir + data_folder + expt_name + '.bigwig'
+      self.base = os.path.join(data_dir, data_folder, expt_name)
+      self.track = os.path.join(data_dir, data_folder, expt_name + '.bigwig')
     self.binned_chroms = {}
 
   def load_chrnp(self, chromosome):
@@ -115,7 +115,7 @@ class Experiment:
     self.expt_suffix = expt_suffix
     self.data_folder = data_folder
     self.chroms = chroms
-    chrom_tracks = glob.glob(data_folder+expt_name+'*'+expt_suffix)
+    chrom_tracks = glob.glob(os.path.join(data_folder, expt_name+'*'+expt_suffix))
     chroms_with_tracks = [t.split('/')[-1].split('.')[1] for t in chrom_tracks]
     # print(chrom_tracks, data_folder+expt_name+'*'+expt_suffix)
     # print(chrom_tracks)
@@ -129,7 +129,7 @@ class Experiment:
   #   return self.expt_name
 
   def load_chrnp(self, chromosome, interval_filter=None):
-    np_file = self.data_folder + '{}.{}{}'.format(self.expt_name, chromosome, self.expt_suffix)
+    np_file = os.path.join(self.data_folder, '{}.{}{}'.format(self.expt_name, chromosome, self.expt_suffix))
     vals = np.squeeze(np.load(np_file)['arr_0'])
     if interval_filter is not None:
       vals = interval_filter.filter_array(vals, chromosome, array_resolution=25)
@@ -240,7 +240,7 @@ class Experiment:
 
     # TODO put this into track from h5 helper function
     h5_filename = '{}_{}_targets.h5'.format(chrom, dataset)
-    chrom_f = data_dir + '{}'.format(h5_filename)
+    chrom_f = os.path.join(data_dir, '{}'.format(h5_filename))
     
     with h5py.File(chrom_f, 'r') as h5f:
       unfiltered_targets = h5f['targets'][:BINNED_CHRSZ[chrom], gt_expt_ind]
@@ -509,7 +509,7 @@ class TrackHandler:
   def save_mses(self, output_path=None):
     # | chromosomes | expt_name | filter_type | transform | mse
     if output_path is None:
-      output_path = self.dataset_dir + 'mses.csv'
+      output_path = os.path.join(self.dataset_dir, 'mses.csv')
 
     with open(output_path, 'a') as outf:
       filter_name = self.global_mse.pop('filter')

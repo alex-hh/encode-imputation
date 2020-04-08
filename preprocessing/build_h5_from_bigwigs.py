@@ -29,29 +29,28 @@ def main(directory=None, chroms=['chr21'], all_chroms=False):
       save_to_npz(bw, chroms)
 
   # for train, val gather chromosome np arrays into an h5 array ordered according to th.expt_names
-  if all_chroms:
-    for chrom in chroms:
-      print(chrom)
-      for dataset in ['train', 'val']:
-        save_chrom_h5(dataset, chrom, directory=directory)
+  for chrom in chroms:
+    print(chrom)
+    for dataset in ['train', 'val']:
+      save_chrom_h5(dataset, chrom, directory=directory)
 
-      # combine train, val h5pys into single h5py for 'full' data ('all') - used as input to predict test
-      with h5py.File(directory+'{}_train_targets.h5'.format(chrom), 'r') as h5f:
-        train_vals = h5f['targets'][:]
-      with h5py.File(directory+'{}_val_targets.h5'.format(chrom), 'r') as h5f:
-        val_vals = h5f['targets'][:]
+    # combine train, val h5pys into single h5py for 'full' data ('all') - used as input to predict test
+    with h5py.File(directory+'{}_train_targets.h5'.format(chrom), 'r') as h5f:
+      train_vals = h5f['targets'][:]
+    with h5py.File(directory+'{}_val_targets.h5'.format(chrom), 'r') as h5f:
+      val_vals = h5f['targets'][:]
 
-      all_vals = np.concatenate([train_vals, val_vals], axis=-1)
-      print('Building full (train+val) dataset')
-      with h5py.File(directory+'{}_all_targets.h5'.format(chrom), 'w') as h5f:
-        h5f['targets'][:] = all_vals
+    all_vals = np.concatenate([train_vals, val_vals], axis=-1)
+    print('Building full (train+val) dataset')
+    with h5py.File(directory+'{}_all_targets.h5'.format(chrom), 'w') as h5f:
+      h5f['targets'][:] = all_vals
     
   print('Done')
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument('-chrom_list', nargs='+', required=False, help="Chromosome list e.g. chr1 chr3; specify 'all' to include all chroms")
+  parser.add_argument('--chroms', nargs='+', default=['chr21'], help="Chromosome list e.g. chr1 chr3; specify 'all' to include all chroms")
   parser.add_argument('--directory', default=None)
   parser.add_argument('--all_chroms', action='store_true')
   args = parser.parse_args()
-  main(chroms=args.chrom_list, directory=args.directory, all_chroms=args.all_chroms)
+  main(chroms=args.chroms, directory=args.directory, all_chroms=args.all_chroms)

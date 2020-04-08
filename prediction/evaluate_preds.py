@@ -5,7 +5,7 @@ from utils.CONSTANTS import dataset_expts, data_dir, output_dir
 
 
 def main(model_name, expt_set, chrom, checkpoint_code, dataset='val', expt_suffix=None, gt_file_type='h5'):
-  expt_dir = os.path.join(output_dir, '{}_imputations/{}/{}/'.format(dataset, expt_set, model_name))
+  expt_dir = os.path.join(output_dir, '{}_imputations', '' if expt_set is None else expt_set, model_name)
   th = TrackHandler(dataset=dataset, dataset_dir=expt_dir, chroms=[chrom], transform=None,
                     expt_suffix='.{}.npz'.format(checkpoint_code) if expt_suffix is None else expt_suffix)
 

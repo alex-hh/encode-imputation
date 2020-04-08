@@ -14,7 +14,7 @@ from utils.chunked_data_loaders import ChunkedTrainDataGeneratorHDF5
 
 def get_validation_callbacks(val_model, val_gen, checkpoint_folder, expt_name, verbose=1,
                              eval_freq=1000000, weighted_average=False, test_run=False):
-  checkpoint_path = checkpoint_folder + '/{}'.format(expt_name) + '_ep{epoch:02d}.{number}-{val_loss:.3f}.hdf5'
+  checkpoint_path = os.path.join(checkpoint_folder, '{}'.format(expt_name) + '_ep{epoch:02d}.{number}-{val_loss:.3f}.hdf5')
   callback_class = MovingAverageVal if weighted_average else GeneratorVal
   callbacks = [callback_class(val_gen, val_model, checkpoint_each_eval=True,
                               log_prefix='val_', verbose=verbose, eval_freq=500 if test_run else eval_freq, # TODO what does log prefix do?
@@ -24,7 +24,7 @@ def get_validation_callbacks(val_model, val_gen, checkpoint_folder, expt_name, v
   return callbacks
 
 def get_checkpoint_callbacks(checkpoint_folder, expt_name, weighted_average=False, verbose=1):
-  checkpoint_path = checkpoint_folder + '/{}'.format(expt_name) +'_{epoch:02d}-{loss:.2f}.hdf5'
+  checkpoint_path = os.path.join(checkpoint_folder, '{}'.format(expt_name) +'_{epoch:02d}-{loss:.2f}.hdf5')
   if weighted_average:
     raise NotImplementedError('MovingAverageCheckpoint doesnt do anything rn as far as I can tell')
     # callbacks = [MovingAverageCheckpoint(checkpoint_path=epoch_checkpoint_path, verbose=verbose)]

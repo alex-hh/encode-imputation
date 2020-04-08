@@ -11,7 +11,7 @@ def main(model_imp_path, expt_set, checkpoint_code, val_track, dataset='test', c
   print('model name (ensemble code) {} expt set {} checkpoint {} track {} dataset {} chroms {}'.format(model_imp_path, expt_set, checkpoint_code,
                                                                                                        val_track, dataset, ','.join(chroms)))
 
-  outdir = os.path.join(output_dir, '{}_bigwigs/{}/{}'.format(dataset, expt_set, model_imp_path))
+  outdir = os.path.join(output_dir, '{}_bigwigs'.format(dataset), '' if expt_set is None else expt_set, model_imp_path)
   os.makedirs(outdir, exist_ok=True)
 
   print(outdir)
@@ -31,7 +31,9 @@ def main(model_imp_path, expt_set, checkpoint_code, val_track, dataset='test', c
     ends[-1] = chrom_size # convert from ends whose final entries will be (n-1, n) with n-1 < chrom_size and chrom_size < n < chrom_size+25
                           # to (n-1, chrom size) e.g. (chrom_size-3, chrom_size+22) would become (chrom_size-3, chrom_size). So we have a reduced size range as the final range.
     # '/{}.{}.{}.npz'.format(t, chrom, checkpoint_code)
-    imp_file = os.path.join(output_dir, '{}_imputations/{}/{}/{}.{}.{}.npz'.format(dataset, expt_set, model_imp_path, val_track, chrom, checkpoint_code))
+    checkpoint_str = '' if checkpoint_code is None else '.' + str(checkpoint_code)
+    imp_file = os.path.join(output_dir, '{}_imputations'.format(dataset), '' if expt_set is None else expt_set,
+                            model_imp_path, '{}.{}{}.npz'.format(val_track, chrom, checkpoint_str))
     if os.path.exists(imp_file):
       print('Loading predicted values')
       values = np.load(imp_file)['arr_0']
@@ -58,7 +60,7 @@ if __name__ == '__main__':
   parser.add_argument('expt_set')
   parser.add_argument('checkpoint_code')
   parser.add_argument('val_track')
-  parser.add_argument('-chroms', nargs='+', default=['chr21'])
+  parser.add_argument('--chroms', nargs='+', default=['chr21'])
   parser.add_argument('--dataset', default='test')
   args = parser.parse_args()
   main(args.model_imp_path, args.expt_set, args.checkpoint_code, args.val_track, dataset=args.dataset, chroms=args.chroms)

@@ -8,7 +8,8 @@ from utils.CONSTANTS import output_dir
 
 def find_last_checkpoint(model_name, expt_set, weights_dir, moving_avg=False):
   print('Searching for checkpoints in dir', weights_dir)
-  checkpoint_path = os.path.join(output_dir, 'weights/{}/{}_ep*{}.hdf5'.format(expt_set, model_name, '-ewa*' if moving_avg else ''))
+  checkpoint_path = os.path.join(output_dir, 'weights', '' if expt_set is None else expt_set,
+                                 '{}_ep*{}.hdf5'.format(model_name, '-ewa*' if moving_avg else ''))
   print('Searching for checkpoints matching', checkpoint_path)
   checkpoints = glob.glob(checkpoint_path)
   last_checkpoint_path = None
@@ -24,14 +25,15 @@ def find_last_checkpoint(model_name, expt_set, weights_dir, moving_avg=False):
     raise Exception('No matching checkpoints found')
   return last_checkpoint_path
 
-def find_checkpoint(model_name, expt_set, checkpoint_code=None, moving_avg=False, weights_dir=None):
+def find_checkpoint(model_name, expt_set=None, checkpoint_code=None, moving_avg=False, weights_dir=None):
   # find the path of the desired weight file
   if weights_dir is None:
     weights_dir = output_dir
   if checkpoint_code is None:
     return find_last_checkpoint(model_name, expt_set, weights_dir, moving_avg=moving_avg)
   print('Searching for checkpoints in dir', weights_dir)
-  checkpoint_path = os.path.join(output_dir, 'weights/{}/{}_ep{}{}*.hdf5'.format(expt_set, model_name, checkpoint_code, '-ewa' if moving_avg else ''))
+  checkpoint_path = os.path.join(output_dir, 'weights', '' if expt_set is None else expt_set,
+                                 '{}_ep{}{}*.hdf5'.format(model_name, checkpoint_code, '-ewa' if moving_avg else ''))
   print('Searching for checkpoints matching', checkpoint_path)
   checkpoints = glob.glob(checkpoint_path)
   assert len(checkpoints) == 1, 'check checkpoints : found {} : {}'.format(len(checkpoints), checkpoints, checkpoint_path)
