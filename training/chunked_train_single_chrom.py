@@ -46,7 +46,7 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
   # from training.expt_config_savers import save_train_config
   # save_train_config(expt_set, model_name, model, train_gen,
   #                   weighted_average=weighted_average, eval_freq=eval_freq,
-  #                   train_kwargs={'epochs': epochs, 'dataset_size': dataset_size,
+  #                   train_kwargs={'epochs': epochs, 'epoch_size': epoch_size,
   #                                 'loss': 'cauchy5', 'optimizer': 'adam',
   #                                 'lr': 0.0003, 'seed': seed})
 
@@ -61,7 +61,7 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
     val_gen = ValDataGeneratorHDF5(train_dataset=train_dataset, chrom=chrom, batch_size=256,
                                    directory=data_directory)
     callbacks += get_validation_callbacks(val_model, val_gen, checkpoint_folder, model_name,
-                                          weighted_average=weighted_average, eval_freq=dataset_size,
+                                          weighted_average=weighted_average, eval_freq=eval_freq,
                                           test_run=test_run, verbose=2 if test_run else 1)
   else:
     # callbacks save weights each dataset_size samples (i.e. each 'epoch')
