@@ -1,0 +1,40 @@
+{
+  "model_kwargs": {
+    "model_class": "DAE",
+    "obs_counts": [
+      50,
+      45
+    ],
+    "n_drop": 50,
+    "n_train_obs": 267,
+    "mlp_dropout": 0.3,
+    "dae_dim": [
+      100,
+      50
+    ],
+    "num_hidden": 2048,
+    "assay_embed_dim": 256,
+    "cell_embed_dim": 32,
+    "n_layers": 2
+  },
+  "data_kwargs": {
+    "n_drop": 50,
+    "dataset": "train",
+    "shuffle": true,
+    "data_class": "TrainDataGeneratorHDF5",
+    "batch_size": 256,
+    "replace_gaps": true,
+    "chrom": "chr21"
+  },
+  "val_kwargs": {
+    "weighted_average": false,
+    "eval_freq": 1000000
+  },
+  "train_kwargs": {
+    "loss": "cauchy5",
+    "optimizer": "adam",
+    "lr": 0.0003,
+    "seed": 211,
+    "epochs": 14
+  }
+}

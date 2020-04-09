@@ -17,11 +17,11 @@ class BaseChunkedDataGeneratorHDF5(Sequence):
   Iterate over full chromosome in multiple epochs
   Shuffle (chunks rather than datapoints) at end of one full pass through chromosome 
 
-   dataset_size: if None, load full dataset into memory
+   epoch_size: if None, load full dataset into memory
   """
   track_resolution = 25
   # TODO implement a simplified version of the data generator actually used for training
-  def __init__(self, dataset_size=1000000, replace_gaps=True,
+  def __init__(self, epoch_size=1000000, replace_gaps=True,
                batch_size=256, n_drop=50, dataset='train',
                chrom='chr21', measurements_per_chunk=100,
                constant_size=True, directory=None, n_predict=None,
@@ -37,7 +37,7 @@ class BaseChunkedDataGeneratorHDF5(Sequence):
     self.n_drop = n_drop
     self.batch_size = batch_size
     self.dataset = dataset
-    self.dataset_size = dataset_size
+    self.epoch_size = epoch_size
     self.replace_gaps = replace_gaps
     self.measurements_per_chunk = measurements_per_chunk
     self.constant_size = constant_size
@@ -45,8 +45,8 @@ class BaseChunkedDataGeneratorHDF5(Sequence):
     self.shuffle = shuffle
     self.debug = debug
 
-    if dataset_size is None:
-      self.dataset_size = BINNED_CHRSZ[chrom]
+    if epoch_size is None:
+      self.epoch_size = BINNED_CHRSZ[chrom]
     self.total_chrom_chunks = math.ceil(BINNED_CHRSZ[chrom]/self.measurements_per_chunk)
     self.set_chunk_indexes()
     self.on_epoch_end()
@@ -93,11 +93,11 @@ class BaseChunkedDataGeneratorHDF5(Sequence):
     else:
       self.chunk_indexes = np.arange(self.total_chrom_chunks)
     
-    self.n_epoch_chunks = min(self.dataset_size // self.measurements_per_chunk, len(self.chunk_indexes))
+    self.n_epoch_chunks = min(self.epoch_size // self.measurements_per_chunk, len(self.chunk_indexes))
     print('Total number of chunks to be used in {}: {} of {} possible ungapped chunks, of {} possible total chunks'.format(self.dataset, self.n_epoch_chunks,
           len(self.chunk_indexes), self.total_chrom_chunks))
 
-    if self.dataset_size < (self.total_chrom_chunks * self.measurements_per_chunk):
+    if self.epoch_size < (self.total_chrom_chunks * self.measurements_per_chunk):
       # spread a single pass through the chromosome (a metaepoch) across multiple epochs, only loading dataset size into memory at each epoch
       self.n_ep_per_metaep = math.ceil(len(self.chunk_indexes) / self.n_epoch_chunks)
       self.subepoch_ind = self.n_ep_per_metaep - 1 # just so that on_epoch_end triggers a new metaepoch at start of training

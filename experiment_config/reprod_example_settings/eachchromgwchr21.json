@@ -1,0 +1,58 @@
+{
+  "expt_name": "eachchromgridwinner_chromschr21",
+  "model_kwargs": {
+    "model_class": "DAE",
+    "obs_counts": [
+      50,
+      45
+    ],
+    "n_drop": 50,
+    "mlp_dropout": 0.3,
+    "dae_dim": [
+      100,
+      50
+    ]
+  },
+  "data_kwargs": {
+    "data_class": "HDF5InMemDict",
+    "n_drop": 50,
+    "n_predict": 50,
+    "dataset": "train",
+    "directory": "data/",
+    "chroms": [
+      "chr21"
+    ],
+    "chunks_per_batch": 256,
+    "transform": null,
+    "custom_splits": false,
+    "use_metaepochs": true,
+    "subsample_each_epoch": true,
+    "dataset_size": 1000000,
+    "replace_gaps": true,
+    "use_backup": false,
+    "shuffle": true
+  },
+  "val_kwargs": {
+    "data_class": "HDF5InMemDict",
+    "loss": "mse",
+    "shuffle": false,
+    "dataset": "val",
+    "train_dataset": "all",
+    "eval_freq": 500000,
+    "custom_val": true,
+    "trainchrom_val_size": 500000,
+    "secondarychrom_val_size": 50000,
+    "val_base_filename": "{}_selected_valbins.h5",
+    "constant_size": false,
+    "use_metaepochs": false,
+    "subsample_each_epoch": false
+  },
+  "train_kwargs": {
+    "loss": "cauchy5",
+    "optimizer": "adam",
+    "lr": 0.0003,
+    "monitor_all": false,
+    "n_samples": 30000000,
+    "same_seed": false
+  }
+}

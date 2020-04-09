@@ -1,0 +1,48 @@
+{
+  // removed: 
+  // changed: data loaders are now single chrom by defaul
+  //  so data_kwargs is chrom rather than chroms
+  //  other data_kwargs are simpler e.g. renamed chunks_per_batch --> batch_size, no use_metaepochs etc.
+  //  val_kwargs much simplified - now just two options, whereas before could choose all sorts of things
+  "model_kwargs": {
+    "n_train_obs": 267,
+    "mlp_dropout": 0.3,
+    "dae_dim": [
+      100,
+      50
+    ],
+    "num_hidden": 2048,
+    "assay_embed_dim": 256,
+    "cell_embed_dim": 32,
+    "n_layers": 2,
+    "n_drop": 50,
+    "obs_counts": [
+      50,
+      45
+    ],
+    "model_class": "DAE"
+  },
+  "data_kwargs": {
+    "shuffle": true,
+    "dataset": "train",
+    "chrom": "chr21",
+    "directory": "data/",
+    "n_drop": 50,
+    "split_file": null,
+    "batch_size": 256,
+    "data_class": "ChunkedTrainDataGeneratorHDF5",
+    "epoch_size": 1000000,
+    "replace_gaps": true
+  },
+  "val_kwargs": {
+    "weighted_average": false,
+    "eval_freq": 1000000
+  },
+  "train_kwargs": {
+    "epochs": 11,
+    "loss": "cauchy5",
+    "optimizer": "adam",
+    "lr": 0.0003,
+    "seed": 211
+  }
+}

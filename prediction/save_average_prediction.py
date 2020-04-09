@@ -24,7 +24,7 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directo
   ensemble_imp_path = 'averaged_preds-{}/{}'.format(checkpoint_code, ensemble_code)
 
   imp_dir = os.path.join(directory, '{}_imputations/{}/'.format(dataset, expt_set))
-  os.makedirs(imp_dir+ensemble_imp_path, exist_ok=True)
+  os.makedirs(os.path.join(imp_dir, ensemble_imp_path), exist_ok=True)
   pred_track_names = dataset_expts[dataset]
     
   print('averaging chromosome: {}'.format(chrom))
@@ -35,7 +35,7 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directo
     avg = np.zeros(BINNED_CHRSZ[chrom])
     expts_included = []
     for m in model_list:
-      imp_path = imp_dir+m+'/{}.{}.{}.npz'.format(t, chrom, checkpoint_code)
+      imp_path = os.path.join(os.path.join(imp_dir, m), '/{}.{}.{}.npz'.format(t, chrom, checkpoint_code))
       if os.path.exists(imp_path):
         vals = np.load(imp_path)['arr_0']
         assert vals.shape[0] == BINNED_CHRSZ[chrom], 'wrong shape: pred shape {} != chrom shape {}'.format(vals.shape[0],
@@ -52,9 +52,9 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directo
     nans = np.isnan(avg).any()
     assert not nans, 'NANS in ARRAY, NOT SAVING'
     
-    np.savez_compressed(imp_dir+ensemble_imp_path+'/{}.{}.npz'.format(t, chrom), avg)
+    np.savez_compressed(os.path.join(imp_dir, os.path.join(ensemble_imp_path, '/{}.{}.npz'.format(t, chrom)), avg))
     # save list of models which had predictions and were therefore included
-    with open(imp_dir+ensemble_imp_path+'/{}.{}_info.txt'.format(t, chrom), 'w') as f:
+    with open(os.path.join(imp_dir, os.path.join(ensemble_imp_path, '/{}.{}_info.txt'.format(t, chrom))), 'w') as f:
       for expt in expts_included:
         f.write(expt+'\n')
   

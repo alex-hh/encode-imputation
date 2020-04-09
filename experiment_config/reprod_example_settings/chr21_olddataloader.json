@@ -1,0 +1,55 @@
+{
+  // removed: 
+  // changed: data loaders are now single chrom by defaul
+  //  so data_kwargs is chrom rather than chroms
+  //  other data_kwargs are simpler e.g. renamed chunks_per_batch --> batch_size, no use_metaepochs etc.
+  //  val_kwargs much simplified
+  "model_kwargs": {
+    "n_train_obs": 267,
+    "mlp_dropout": 0.3,
+    "dae_dim": [
+      100,
+      50
+    ],
+    "num_hidden": 2048,
+    "assay_embed_dim": 256,
+    "cell_embed_dim": 32,
+    "n_layers": 2,
+    "n_drop": 50,
+    "obs_counts": [
+      50,
+      45
+    ],
+    "model_class": "DAE"
+  },
+  "data_kwargs": {
+    "data_class": "HDF5InMemDict",
+    "n_drop": 50,
+    "n_predict": 50,
+    "dataset": "train",
+    "directory": "data/",
+    "chroms":[
+      "chr21"
+    ],
+    "chunks_per_batch": 256,
+    "transform": null,
+    "custom_splits": false,
+    "use_metaepochs": true,
+    "subsample_each_epoch": true,
+    "epoch_size": 1000000,
+    "replace_gaps": true,
+    "use_backup": false,
+    "shuffle": true
+  },
+  "val_kwargs": {
+    "weighted_average": false,
+    "eval_freq": 1000000
+  },
+  "train_kwargs": {
+    "epochs": 11,
+    "loss": "cauchy5",
+    "optimizer": "adam",
+    "lr": 0.0003,
+    "seed": 211
+  }
+}
