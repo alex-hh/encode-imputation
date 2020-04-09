@@ -41,7 +41,8 @@ def main(expt_set=None, checkpoint_code=None, dataset='test', pred_chroms=['chr2
     pred_track_list = dataset_expts[dataset]
     for track in pred_track_list:
       # gather predictions for all chromosomes for given track into a single bigwig file
-      save_bigwig(ensemble_path, expt_set, checkpoint_code, track, dataset=dataset, chroms=pred_chroms)
+      save_bigwig(ensemble_path, expt_set, checkpoint_code, track, dataset=dataset, chroms=pred_chroms,
+                  output_directory=output_directory)
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
