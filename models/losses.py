@@ -3,7 +3,7 @@ import numpy as np
 
 from keras import backend as K
 from keras.losses import mean_squared_error
-from tensorflow.losses import Reduction # the reduction to apply to loss
+# from tensorflow.losses import Reduction # the reduction to apply to loss
 # https://www.tensorflow.org/api_docs/python/tf/compat/v2/keras/losses/Reduction
 
 from functools import partial, update_wrapper
@@ -33,8 +33,8 @@ def wrapped_partial(func, name=None, *args, **kwargs):
     partial_func.__name__ = name
   return partial_func
 
-def huber_loss(y_true, y_pred, delta=1.0):
-  return tf.losses.huber_loss(y_true, y_pred, delta=delta, reduction=Reduction.NONE)
+# def huber_loss(y_true, y_pred, delta=1.0):
+#   return tf.losses.huber_loss(y_true, y_pred, delta=delta, reduction=Reduction.NONE)
 
 def cauchy_loss(y_true, y_pred):
   return K.mean(K.log(1.0+K.square(y_pred - y_true)), axis=-1) # (batch_size, 1)
@@ -75,19 +75,19 @@ def logcosh(y_true, y_pred):
         return x + K.softplus(-2. * x) - K.log(2.)
     return K.mean(_logcosh(y_pred - y_true), axis=-1)
 
-huber2 = wrapped_partial(huber_loss, delta=2.0)
-huber5 = wrapped_partial(huber_loss, delta=5.0) # when y = 5 this means p = 10^-5. for p > 10^-5
-huber10 = wrapped_partial(huber_loss, delta=10.0)
-huber25 = wrapped_partial(huber_loss, delta=25.0)
-huber50 = wrapped_partial(huber_loss, delta=50.0)
-huber100 = wrapped_partial(huber_loss, delta=100.0)
+# huber2 = wrapped_partial(huber_loss, delta=2.0)
+# huber5 = wrapped_partial(huber_loss, delta=5.0) # when y = 5 this means p = 10^-5. for p > 10^-5
+# huber10 = wrapped_partial(huber_loss, delta=10.0)
+# huber25 = wrapped_partial(huber_loss, delta=25.0)
+# huber50 = wrapped_partial(huber_loss, delta=50.0)
+# huber100 = wrapped_partial(huber_loss, delta=100.0)
 
-huber2r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=2.0)
-huber5r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=5.0) # when y = 5 this means p = 10^-5. for p > 10^-5
-huber10r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=10.0)
-huber25r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=25.0)
-huber50r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=50.0)
-huber100r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=100.0)
+# huber2r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=2.0)
+# huber5r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=5.0) # when y = 5 this means p = 10^-5. for p > 10^-5
+# huber10r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=10.0)
+# huber25r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=25.0)
+# huber50r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=50.0)
+# huber100r = wrapped_partial(robust_squared_error, robustifier=huber_robustifier, delta=100.0)
 
 cauchy1 = wrapped_partial(robust_squared_error, robustifier=cauchy_robustifier, scale=1.0)
 cauchy2 = wrapped_partial(robust_squared_error, robustifier=cauchy_robustifier, scale=2.0)

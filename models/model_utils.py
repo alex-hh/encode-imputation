@@ -16,9 +16,10 @@ def find_last_checkpoint(model_name, expt_set, weights_dir, moving_avg=False):
   last_checkpoint_num = 0
   for checkpoint in checkpoints:
     try:
-      checkpoint_code = float(re.search('\d+.?\d+', checkpoint).group(0))
-      if checkpoint_code > last_checkpoint_num:
+      checkpoint_num = float(re.search('\d+.?\d+', checkpoint.split(model_name+'_ep')[1]).group(0))
+      if checkpoint_num > last_checkpoint_num:
         last_checkpoint_path = checkpoint
+        last_checkpoint_num = checkpoint_num
     except:
       pass
   if last_checkpoint_path is None:
