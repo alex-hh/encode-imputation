@@ -16,7 +16,7 @@ To build these files for a single chromosome (e.g. chr21), run:
 
 ### Predictions for a single model
 
-To compute predictions for a single model on a single chromosome (e.g. chr21), ensure that the saved model checkpoints are in a folder /path/to/output_dir/weights. The checkpoints files themselvesshould follow the naming convention used in the training callback to save weights, that is: \<model\_name\>\_ep\<checkpoint_number\>-\<loss\>.hdf5 (cf the construction of the base checkpoint path in training.expt_config_loaders.get_validation_callbacks) Then run:
+To compute predictions for a single model on a single chromosome (e.g. chr21), ensure that the saved model checkpoint(s) are in a folder /path/to/output_dir/weights. The checkpoint files themselves should follow the naming convention used in the training callback to save weights, that is: \<model\_name\>\_ep\<checkpoint_number\>-\<loss\>.hdf5 (cf the construction of the base checkpoint path in training.expt_config_loaders.get_validation_callbacks) Then run:
 
   ``` bash
       python prediction/build_prediction_single.py model_name --train_dataset 'train' --dataset 'val' \
