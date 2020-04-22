@@ -11,13 +11,14 @@ from prediction.save_bigwig import main as save_bigwig
 # pred_chroms = ['chr{}'.format(i) for i in list(range(23))+['X']]
 
 def main(model_name, expt_set=None, checkpoint_code=None, dataset='test', train_dataset='all',
-         pred_chroms=['chr21'], moving_average=False, data_directory=None,
-         output_directory=None):
+         pred_chroms=['chr21'], moving_average=False, data_directory=None, output_directory=None,
+         checkpoint_file=None):
   for pred_chrom in pred_chroms:
     print('Saving preds for model {} on chromosome {}'.format(model_name, pred_chrom))
     save_model_chrom_preds(model_name, pred_chrom, expt_set=expt_set, checkpoint_code=checkpoint_code,
                            dataset=dataset, train_dataset=train_dataset, moving_average=moving_average,
-                           data_directory=data_directory, output_directory=output_directory)
+                           data_directory=data_directory, output_directory=output_directory,
+                           checkpoint_file=checkpoint_file)
     # print('Evaluating preds')
     # if dataset == 'val':
     # evaluate_preds(model_name, expt_set, pred_chrom, checkpoint_code, output_directory=output_directory)
@@ -41,8 +42,9 @@ if __name__ == '__main__':
   parser.add_argument('--moving_average', action='store_true')
   parser.add_argument('--data_directory', type=str, default=None)
   parser.add_argument('--output_directory', type=str, default=None)
+  parser.add_argument('--checkpoint_file', type=str, default=None)
   args = parser.parse_args()
   main(args.model_name, expt_set=args.expt_set, checkpoint_code=args.checkpoint_code,
        dataset=args.dataset, train_dataset=args.train_dataset, pred_chroms=args.chroms,
        moving_average=args.moving_average, data_directory=args.data_directory,
-       output_directory=args.output_directory)
+       output_directory=args.output_directory, checkpoint_file=args.checkpoint_file)

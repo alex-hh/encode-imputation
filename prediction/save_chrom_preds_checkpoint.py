@@ -22,7 +22,7 @@ def get_train_track_names(train_dataset='all'):
   else:
     raise Exception('Train dataset must be either train or all')
 
-def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', dataset='val'):
+def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', dataset='val', checkpoint_file=None):
   """
     expt_set must be specified in this case, because we're loading config which for now assumes an expt_set subdirectory
   """
@@ -69,7 +69,7 @@ def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', d
   _, model = load_models_from_config(config_file, val_n_tracks=len(pred_track_names))
   if moving_average:
     print('Looking for weighted average checkpoint')
-  checkpoint = find_checkpoint(model_name, expt_set=expt_set, checkpoint_code=checkpoint_code, moving_avg=moving_average)
+  checkpoint = checkpoint_file or find_checkpoint(model_name, expt_set=expt_set, checkpoint_code=checkpoint_code, moving_avg=moving_average)
   print('Loading checkpoint', checkpoint)
   model.load_weights(checkpoint)
 
@@ -98,5 +98,7 @@ if __name__ == '__main__':
   parser.add_argument('dataset')
   parser.add_argument('--expt_set', type=str, default=None)
   parser.add_argument('--checkpoint_code', type=str, default=None)
+  parser.add_argument('--checkpoint_file', type=str, default=None)
   args = parser.parse_args()
-  main(args.model_name, args.chrom, expt_set=args.expt_set, dataset=args.dataset, checkpoint_code=args.checkpoint_code)
+  main(args.model_name, args.chrom, expt_set=args.expt_set, dataset=args.dataset, checkpoint_code=args.checkpoint_code,
+       checkpoint_file=args.checkpoint_file)

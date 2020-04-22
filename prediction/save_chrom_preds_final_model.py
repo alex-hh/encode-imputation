@@ -12,7 +12,8 @@ from utils.CONSTANTS import dataset_expts, BINNED_CHRSZ, data_dir, output_dir
 
 
 def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', dataset='test', 
-         train_dataset='all', moving_average=False, output_directory=None, data_directory=None):
+         train_dataset='all', moving_average=False, output_directory=None, data_directory=None,
+         checkpoint_file=None):
   if expt_set in ['imp', 'imp1']:
     checkpoint_code = 14 if expt_set == 'imp' else 14.0 # these are just used to identify the weights file that is loaded
   if output_directory is None:
@@ -40,12 +41,12 @@ def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', d
   pred_model = model.models[n_predict]
   pred_model.compile(loss='mse', optimizer='adam')
 
-  checkpoint = find_checkpoint(model_name, expt_set=expt_set, checkpoint_code=checkpoint_code, moving_avg=moving_average,
-                               weights_dir=output_directory)
+  checkpoint = checkpoint_file or find_checkpoint(model_name, expt_set=expt_set, checkpoint_code=checkpoint_code, moving_avg=moving_average,
+                                                  weights_dir=output_directory)
   print('Loading checkpoint', checkpoint)
   pred_model.load_weights(checkpoint)
 
-  # print('Making predictions')
+  print('Making predictions')
   preds = pred_model.predict_generator(data_gen, verbose=1, steps=None)
   print('Pred shape', preds.shape)
   preds = np.squeeze(preds)
@@ -72,9 +73,11 @@ if __name__ == '__main__':
   parser.add_argument('--train_dataset', default='all')
   parser.add_argument('--moving_average', action='store_true')
   parser.add_argument('--checkpoint_code', default='14', type=str) # identifies checkpoint, should be 14 for imp and 14.0 for imp1
-  parser.add_argument('--data_directory', default=None)
-  parser.add_argument('--output_directory', default=None)
+  parser.add_argument('--data_directory', type=str, default=None)
+  parser.add_argument('--output_directory', type=str, default=None)
+  parser.add_argument('--checkpoint_file', type=str, default=None)
   args = parser.parse_args()
   main(args.model_name, args.chrom, expt_set=args.expt_set, checkpoint_code=args.checkpoint_code,
        dataset=args.dataset, train_dataset=args.train_dataset, moving_average=args.moving_average,
-       data_directory=args.data_directory, output_directory=args.output_directory)
+       data_directory=args.data_directory, output_directory=args.output_directory,
+       checkpoint_file=args.checkpoint_file)

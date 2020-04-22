@@ -12,15 +12,17 @@ def find_last_checkpoint(model_name, expt_set, weights_dir, moving_avg=False):
                                  '{}_ep*{}.hdf5'.format(model_name, '-ewa*' if moving_avg else ''))
   print('Searching for checkpoints matching', checkpoint_path)
   checkpoints = glob.glob(checkpoint_path)
+  print('Matched checkpoints', checkpoints)
   last_checkpoint_path = None
   last_checkpoint_num = 0
   for checkpoint in checkpoints:
     try:
-      checkpoint_num = float(re.search('\d+.?\d+', checkpoint.split(model_name+'_ep')[1]).group(0))
+      checkpoint_num = float(re.search('\d+\.?\d+', checkpoint.split(model_name+'_ep')[1]).group(0))
       if checkpoint_num > last_checkpoint_num:
         last_checkpoint_path = checkpoint
         last_checkpoint_num = checkpoint_num
-    except:
+    except Exception as e:
+      # print(e)
       pass
   if last_checkpoint_path is None:
     raise Exception('No matching checkpoints found')
