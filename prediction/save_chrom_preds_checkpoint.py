@@ -22,7 +22,11 @@ def get_train_track_names(train_dataset='all'):
   else:
     raise Exception('Train dataset must be either train or all')
 
+<<<<<<< HEAD
 def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', dataset='val', checkpoint_file=None):
+=======
+def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', dataset='val'):
+>>>>>>> d3117156b101c2dc90840793f192dc546a4c5fb7
   """
     expt_set must be specified in this case, because we're loading config which for now assumes an expt_set subdirectory
   """
