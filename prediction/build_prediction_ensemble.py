@@ -16,7 +16,7 @@ imp_weights_list = ['chromschr1', 'chromschr3', 'chromschr4', 'chromschr5', 'chr
 # pred_chroms = ['chr{}'.format(i) for i in list(range(23))+['X']]
 def main(expt_set=None, checkpoint_code=None, dataset='test', pred_chroms=['chr21'],
          train_dataset='all', all_chroms=False, weights_list=None, data_directory=None,
-         output_directory=None, moving_average=False):
+         output_directory=None, moving_average=False, save_bigwigs=False):
   if weights_list is None or len(weights_list)==0:
     weights_list = imp_weights_list
   if all_chroms:
@@ -36,7 +36,7 @@ def main(expt_set=None, checkpoint_code=None, dataset='test', pred_chroms=['chr2
                                          dataset=dataset, model_list=weights_list,
                                          directory=output_directory)
 
-  if len(pred_chroms) == 23:
+  if save_bigwigs:
     print('Gathering predictions into bigwig tracks')
     pred_track_list = dataset_expts[dataset]
     for track in pred_track_list:
@@ -57,10 +57,11 @@ if __name__ == '__main__':
   parser.add_argument('--all_chroms', action='store_true')
   parser.add_argument('--data_directory', default=None)
   parser.add_argument('--output_directory', default=None)
+  parser.add_argument('--save_bigwigs', action='store_true')
   args = parser.parse_args()
 
   main(args.expt_set, args.checkpoint_code, dataset=args.dataset,
        pred_chroms=args.chroms, all_chroms=args.all_chroms,
        weights_list=args.weights_names, data_directory=args.data_directory,
        output_directory=args.output_directory, moving_average=args.moving_average,
-       train_dataset=args.train_dataset)
+       train_dataset=args.train_dataset, save_bigwigs=args.save_bigwigs)
