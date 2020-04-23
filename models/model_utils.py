@@ -6,6 +6,7 @@ from keras.optimizers import Adam
 from utils.CONSTANTS import output_dir
 
 
+
 def find_last_checkpoint(model_name, expt_set, weights_dir, moving_avg=False):
   print('Searching for checkpoints in dir', weights_dir)
   checkpoint_path = os.path.join(weights_dir, 'weights', '' if expt_set is None else expt_set,
