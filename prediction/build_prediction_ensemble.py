@@ -51,7 +51,7 @@ if __name__ == '__main__':
   parser.add_argument('--checkpoint_code', default='14') # ep07.1
   # parser.add_argument('-model_list', nargs='+', required=True)
   parser.add_argument('--dataset', default='test')
-  parser.add_argument('--expt_set', type=str, default='chr21_reprod')
+  parser.add_argument('--expt_set', type=str, default=None)
   parser.add_argument('--train_dataset', default='all')
   parser.add_argument('--moving_average', action='store_true')
   parser.add_argument('--all_chroms', action='store_true')
