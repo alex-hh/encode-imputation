@@ -31,7 +31,7 @@ def main(expt_set=None, checkpoint_code=None, dataset='test', pred_chroms=['chr2
 
   print('Ensembling')
   for pred_chrom in pred_chroms:
-    # saves a separate npz array for each track and each chromosomes
+    # saves a separate npz array for each track and each chromosome
     ensemble_path = save_ensembled_preds(expt_set, pred_chrom, checkpoint_code,
                                          dataset=dataset, model_list=weights_list,
                                          directory=output_directory)

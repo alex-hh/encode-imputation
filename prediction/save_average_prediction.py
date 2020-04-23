@@ -35,7 +35,7 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directo
     avg = np.zeros(BINNED_CHRSZ[chrom])
     expts_included = []
     for m in model_list:
-      imp_path = os.path.join(os.path.join(imp_dir, m), '/{}.{}.{}.npz'.format(t, chrom, checkpoint_code))
+      imp_path = os.path.join(imp_dir, m, '{}.{}.{}.npz'.format(t, chrom, checkpoint_code))
       if os.path.exists(imp_path):
         vals = np.load(imp_path)['arr_0']
         assert vals.shape[0] == BINNED_CHRSZ[chrom], 'wrong shape: pred shape {} != chrom shape {}'.format(vals.shape[0],
@@ -44,7 +44,7 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directo
         model_count += 1
         expts_included.append(m)
       else:
-        print('No imputations {} {}'.format(m, t))
+        print('No imputations {} {} at path'.format(m, t), imp_path)
 
     avg /= model_count
     all_zeros = not np.any(avg)
@@ -52,9 +52,9 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directo
     nans = np.isnan(avg).any()
     assert not nans, 'NANS in ARRAY, NOT SAVING'
     
-    np.savez_compressed(os.path.join(imp_dir, os.path.join(ensemble_imp_path, '/{}.{}.npz'.format(t, chrom)), avg))
+    np.savez_compressed(os.path.join(imp_dir, ensemble_imp_path, '{}.{}.npz'.format(t, chrom)), avg)
     # save list of models which had predictions and were therefore included
-    with open(os.path.join(imp_dir, os.path.join(ensemble_imp_path, '/{}.{}_info.txt'.format(t, chrom))), 'w') as f:
+    with open(os.path.join(imp_dir, ensemble_imp_path, '{}.{}_info.txt'.format(t, chrom)), 'w') as f:
       for expt in expts_included:
         f.write(expt+'\n')
   
@@ -68,7 +68,7 @@ if __name__ == '__main__':
   parser.add_argument('chrom')
   parser.add_argument('checkpoint_code') # 07.1
   parser.add_argument('dataset')
-  parser.add_argument('-model_list', nargs='+', required=True, help='Model names e.g. chromschr21')
+  parser.add_argument('--model_list', nargs='+', required=True, help='Model names e.g. chromschr21')
   parser.add_argument('--directory', default=None)
   args = parser.parse_args()
   main(args.expt_set, args.chrom, args.checkpoint_code, dataset=args.dataset,

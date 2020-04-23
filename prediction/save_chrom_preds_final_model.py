@@ -21,7 +21,7 @@ def main(model_name, chrom, expt_set=None, checkpoint_code=None, outfmt='npz', d
   if data_directory is None:
     data_directory = data_dir
 
-  print('Saving preds for {} on {} to {}'.format(model_name, dataset, output_dir))
+  print('Saving preds for {} on {} to {}'.format(model_name, dataset, output_directory))
   assert train_dataset in ['train', 'all'], 'train dataset must be either train or all'
 
   if dataset == 'test':
