@@ -52,9 +52,9 @@ def main(expt_set, chrom, checkpoint_code, dataset='val', model_list=[], directo
     nans = np.isnan(avg).any()
     assert not nans, 'NANS in ARRAY, NOT SAVING'
     
-    np.savez_compressed(os.path.join(imp_dir, ensemble_imp_path, '{}.{}.npz'.format(t, chrom)), avg)
+    np.savez_compressed(os.path.join(imp_dir, ensemble_imp_path, '{}.{}.{}.npz'.format(t, chrom, checkpoint_code)), avg)
     # save list of models which had predictions and were therefore included
-    with open(os.path.join(imp_dir, ensemble_imp_path, '{}.{}_info.txt'.format(t, chrom)), 'w') as f:
+    with open(os.path.join(imp_dir, ensemble_imp_path, '{}.{}.{}_info.txt'.format(t, chrom, checkpoint_code)), 'w') as f:
       for expt in expts_included:
         f.write(expt+'\n')
   

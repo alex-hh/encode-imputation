@@ -5,7 +5,7 @@ import numpy as np
 from utils.CONSTANTS import output_dir, all_chromosomes, dataset_expts, BINNED_CHRSZ, CHRSZ
 
 
-def main(model_imp_path, expt_set, checkpoint_code, val_track, dataset='test', chroms=None, output_directory=None):
+def main(model_imp_path, expt_set, val_track, checkpoint_code=None, dataset='test', chroms=None, output_directory=None):
   if chroms is None:
     chroms = all_chromosomes
   if output_directory is None:
@@ -60,11 +60,11 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('model_imp_path')
   parser.add_argument('expt_set')
-  parser.add_argument('checkpoint_code')
   parser.add_argument('val_track')
+  parser.add_argument('--checkpoint_code', default=None)
   parser.add_argument('--chroms', nargs='+', default=['chr21'])
   parser.add_argument('--dataset', default='test')
   parser.add_argument('--output_directory', type=str, default=None)
   args = parser.parse_args()
-  main(args.model_imp_path, args.expt_set, args.checkpoint_code, args.val_track, dataset=args.dataset, chroms=args.chroms,
+  main(args.model_imp_path, args.expt_set, args.val_track, checkpoint_code=args.checkpoint_code, dataset=args.dataset, chroms=args.chroms,
        output_directory=args.output_directory)
