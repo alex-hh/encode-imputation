@@ -8,7 +8,7 @@ def main(model_name, expt_set=None, checkpoint_code=None, dataset='test', chroms
   print('Saving bigwigs for {} predictions on {} dataset (chroms {})'.format(model_name, dataset, ', '.join(chroms)))
   for track in pred_track_list:
     # gather predictions for all chromosomes for given track into a single bigwig file
-    save_bigwig(model_name, expt_set, checkpoint_code, track, dataset=dataset, chroms=chroms,
+    save_bigwig(model_name, expt_set, track, checkpoint_code=checkpoint_code, dataset=dataset, chroms=chroms,
                 output_directory=output_directory)
 
 
