@@ -29,12 +29,12 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
     print('{} epochs of {} datapoints each total {} samples'.format(epochs, BINNED_CHRSZ[chrom], n_samples))
   if model_name is None:
     model_name = '{}_{}'.format(chrom, train_dataset)
-  if train_dataset=='full':
+  if train_dataset=='all':
     n_train_obs = 312
   elif train_dataset == 'train':
     n_train_obs = 267
   else: 
-    raise ValueError('Train set must be either full or train')
+    raise ValueError('Train set must be either all or train')
 
   np.random.seed(seed)
   # n_drop and obs_counts are decoupled to allow the possibility for training on a subset of the dropped signals
@@ -45,7 +45,7 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
   train_model = model.models[50]
   train_model.compile(loss=cauchy5, optimizer=Adam(lr=0.0003))
 
-  train_gen = TrainDataGeneratorHDF5(n_drop=50, chrom=chrom, batch_size=256,
+  train_gen = TrainDataGeneratorHDF5(n_drop=50, chrom=chrom, batch_size=256, dataset=train_dataset,
                                      directory=data_directory, replace_gaps=replace_gaps)
   
   # from training.expt_config_savers import save_train_config
@@ -68,7 +68,7 @@ def main(train_dataset, expt_set=None, model_name=None, chrom='chr21', test_run=
                                           test_run=test_run, verbose=2 if test_run else 1)
   else:
     # callbacks save weights each dataset_size samples (i.e. each 'epoch')
-    callbacks += get_checkpoint_callbacks(checkpoint_folder, model_name, weighted_average=weighted_average)
+    callbacks += get_checkpoint_callbacks(checkpoint_folder, model_name, weighted_average=weighted_average, test_run=test_run)
 
   if save_logs and not test_run:
     callbacks += [CSVLogger(os.path.join(output_directory, 'logs', '' if expt_set is None else expt_set, '{}.csv'.format(model_name)), append=False),

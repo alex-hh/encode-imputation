@@ -23,13 +23,13 @@ def get_validation_callbacks(val_model, val_gen, checkpoint_folder, expt_name, v
   callbacks.append(RunningLossLogger(log_rate=1 if test_run else 100000))
   return callbacks
 
-def get_checkpoint_callbacks(checkpoint_folder, expt_name, weighted_average=False, verbose=1):
+def get_checkpoint_callbacks(checkpoint_folder, expt_name, weighted_average=False, verbose=1, test_run=False):
   checkpoint_path = os.path.join(checkpoint_folder, '{}'.format(expt_name) +'_{epoch:02d}-{loss:.2f}.hdf5')
   if weighted_average:
     raise NotImplementedError('MovingAverageCheckpoint doesnt do anything rn as far as I can tell')
     # callbacks = [MovingAverageCheckpoint(checkpoint_path=epoch_checkpoint_path, verbose=verbose)]
   else: 
-    callbacks = [ModelCheckpoint(epoch_checkpoint_path, monitor='loss', verbose=verbose)]
+    callbacks = [ModelCheckpoint(checkpoint_path, monitor='loss', verbose=verbose)]
   # Prints the cumulative / running loss every log_rate samples per epoch (sample counter resets to 0 each epoch)
   callbacks.append(RunningLossLogger(log_rate=1 if test_run else 100000))
   return callbacks
